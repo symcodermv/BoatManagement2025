@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +16,6 @@
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    <link rel="stylesheet" href="style.css">
     
     <style>
         /* Custom font for the header */
@@ -176,12 +177,12 @@
             padding: 15px;
         }
         
-        .form-section {
-            display: block;
+        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section {
+            display: none;
         }
         
-        .pos-section, .island-section, .payment-section {
-            display: none;
+        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active {
+            display: block;
         }
         
         .form-row {
@@ -368,26 +369,26 @@
         }
         
         /* Island Management Styles */
-        .island-management {
+        .island-management, .product-management {
             background: #f5f7ff;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
         }
         
-        .island-form {
+        .island-form, .product-form {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
         
-        .island-form input {
+        .island-form input, .product-form input {
             flex: 1;
             min-width: 120px;
         }
         
-        .island-list {
+        .island-list, .product-list {
             background: white;
             border-radius: 8px;
             padding: 10px;
@@ -395,7 +396,7 @@
             overflow-y: auto;
         }
         
-        .island-item {
+        .island-item, .product-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -404,7 +405,7 @@
             font-size: 13px;
         }
         
-        .island-item:last-child {
+        .island-item:last-child, .product-item:last-child {
             border-bottom: none;
         }
         
@@ -676,28 +677,75 @@
             text-align: right;
         }
         
-        /* Combined Invoice Styles */
-        .combined-invoice {
-            margin-top: 20px;
-            padding: 15px;
+        /* Customer Registration Form */
+        .customer-registration {
             background: #f5f7ff;
+            padding: 12px;
             border-radius: 8px;
-        }
-        
-        .customer-selector {
             margin-bottom: 15px;
         }
         
-        .customer-selector select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
+        /* Customer List Styles */
+        .customer-list {
+            margin-top: 20px;
         }
         
-        .combined-invoice-actions {
-            text-align: center;
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 15px;
+        }
+        
+        .customer-table th, .customer-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .customer-table th {
+            background-color: #1a2a6c;
+            color: white;
+        }
+        
+        .customer-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
         
         /* Mobile-specific styles */
@@ -709,6 +757,58 @@
         
         .mobile-product-row {
             display: contents;
+        }
+        
+        /* Dashboard Styles */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-card {
+            background: #f5f7ff;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-card h3 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a2a6c;
+        }
+        
+        .dashboard-card .subtext {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-container h3 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            text-align: center;
         }
         
         /* Mobile invoice styles */
@@ -731,6 +831,18 @@
             .invoice-actions .btn {
                 width: 100%;
                 margin-bottom: 8px;
+            }
+            
+            .customer-table {
+                font-size: 12px;
+            }
+            
+            .customer-table th, .customer-table td {
+                padding: 6px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -840,6 +952,40 @@
             text-align: center;
             font-weight: bold;
         }
+        
+        /* Customer Selection Styles */
+        .customer-selection {
+            margin-bottom: 15px;
+        }
+        
+        .customer-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        /* Trip Number Styles */
+        .trip-number-input {
+            display: flex;
+            align-items: center;
+        }
+        
+        .trip-number-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        /* Boat Naalu Styles */
+        .boat-naalu-input {
+            display: flex;
+            align-items: center;
+        }
+        
+        .boat-naalu-input input {
+            flex: 1;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -866,121 +1012,194 @@
         </header>
         
         <div class="tabs">
-            <div class="tab active" data-tab="form">Entry Form</div>
+            <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="form">Entry Form</div>
             <div class="tab" data-tab="pos">POS System</div>
             <div class="tab" data-tab="island">Island Management</div>
+            <div class="tab" data-tab="product">Product Management</div>
             <div class="tab" data-tab="payment">Payment Management</div>
         </div>
         
         <div class="content">
+            <!-- Dashboard Section -->
+            <div class="dashboard-section active" id="dashboard-section">
+                <h2>Dashboard</h2>
+                <p>Overview of your boat trip business</p>
+                
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <h3>Total Products</h3>
+                        <div class="value" id="total-products">0</div>
+                        <div class="subtext">All products delivered</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>Total Boat Naalu</h3>
+                        <div class="value" id="total-naalu">0</div>
+                        <div class="subtext">Total boat trips</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>Total Orders</h3>
+                        <div class="value" id="total-orders">0</div>
+                        <div class="subtext">All customer orders</div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3>Total Revenue</h3>
+                        <div class="value" id="total-revenue">$0</div>
+                        <div class="subtext">From all trips</div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Products Distribution</h3>
+                        <canvas id="products-chart" height="250"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>Island-wise Orders</h3>
+                        <canvas id="islands-chart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Entry Form Section -->
             <div class="form-section" id="form-section">
-                <form id="trip-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="trip-date">Select Date</label>
-                            <input type="date" id="trip-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="island">Select Island</label>
-                            <select id="island" required>
-                                <option value="">Select an island</option>
-                                <!-- Islands will be loaded from Firebase -->
-                            </select>
-                        </div>
+                <div class="island-selector">
+                    <label for="island">Select Island</label>
+                    <select id="island" required>
+                        <option value="">Select an island</option>
+                        <!-- Islands will be loaded from Firebase -->
+                    </select>
+                </div>
+                
+                <div class="customer-selection" id="customer-selection">
+                    <label for="customer-select">Select Customer</label>
+                    <select id="customer-select" class="customer-select">
+                        <option value="">Select a customer</option>
+                        <!-- Customers will be loaded dynamically -->
+                    </select>
+                    <div class="actions" style="margin-top: 10px;">
+                        <button class="btn btn-primary" id="new-customer-btn">New Customer</button>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="customer-name">Customer/Business Name</label>
-                            <input type="text" id="customer-name" placeholder="Enter customer name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="contact">Contact</label>
-                            <input type="text" id="contact" placeholder="Enter contact number" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="receiver-name">Receiver Name (Optional)</label>
-                            <input type="text" id="receiver-name" placeholder="Enter receiver name">
-                        </div>
-                        <div class="form-group">
-                            <label for="receiver-contact">Receiver Contact (Optional)</label>
-                            <input type="text" id="receiver-contact" placeholder="Enter receiver contact">
-                        </div>
-                    </div>
-                    
-                    <h3>Product Details</h3>
-                    <div class="product-details">
-                        <div class="product-header">
-                            <div class="product-name">Product Name</div>
-                            <div class="product-unit">Unit</div>
-                            <div class="product-qty">Quantity</div>
-                            <div class="product-price">Price (RF)</div>
-                            <div class="product-desc">Description</div>
-                            <div class="product-actions">Actions</div>
+                </div>
+                
+                <!-- Customer Registration Form (Initially Hidden) -->
+                <div class="customer-registration" id="customer-registration" style="display: none;">
+                    <h3>Customer Registration</h3>
+                    <form id="customer-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customer-name">Customer/Business Name</label>
+                                <input type="text" id="customer-name" placeholder="Enter customer name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contact">Contact</label>
+                                <input type="text" id="contact" placeholder="Enter contact number" required>
+                            </div>
                         </div>
                         
-                        <div class="product-rows" id="product-rows">
-                            <div class="product-row">
-                                <div class="product-name">
-                                    <input type="text" placeholder="Product name" class="product-input" required>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea id="address" placeholder="Enter customer address"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="actions">
+                            <button type="submit" class="btn btn-success">Save Customer</button>
+                            <button type="button" class="btn btn-warning" id="add-products-btn">Add Products</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Product Entry Form (Initially Hidden) -->
+                <div class="product-details" id="product-details" style="display: none;">
+                    <h3>Product Details</h3>
+                    <form id="product-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="trip-number">Trip Number</label>
+                                <div class="trip-number-input">
+                                    <input type="text" id="trip-number" placeholder="Enter trip number" required>
+                                    <button type="button" class="btn btn-primary" id="generate-trip-number">Generate</button>
                                 </div>
-                                <div class="product-unit">
-                                    <select class="unit-select">
-                                        <option value="Unit">Unit</option>
-                                        <option value="Kg">Kg</option>
-                                        <option value="Foot">Foot</option>
-                                        <option value="Ltr">Ltr</option>
-                                        <option value="Kodi">Kodi</option>
-                                        <option value="Pcs">Pcs</option>
-                                        <option value="Case">Case</option>
-                                        <option value="Dozen">Dozen</option>
-                                        <option value="Can">Can</option>
-                                    </select>
-                                </div>
-                                <div class="product-qty">
-                                    <input type="number" placeholder="Qty" class="qty-input" min="1" value="1" required>
-                                </div>
-                                <div class="product-price">
-                                    <input type="number" placeholder="Price (RF)" class="price-input" min="0" step="0.01">
-                                </div>
-                                <div class="product-desc">
-                                    <input type="text" placeholder="Description (optional)" class="desc-input">
-                                </div>
-                                <div class="product-actions">
-                                    <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-date">Select Date</label>
+                                <input type="date" id="product-date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-time">Select Time</label>
+                                <input type="time" id="product-time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="boat-naalu">Boat Naalu</label>
+                                <div class="boat-naalu-input">
+                                    <input type="text" id="boat-naalu" placeholder="Enter boat naalu" required>
+                                    <button type="button" class="btn btn-primary" id="update-naalu">Update</button>
                                 </div>
                             </div>
                         </div>
                         
-                        <button type="button" class="btn btn-primary" id="add-product"><i class="fas fa-plus"></i> Add Product</button>
-                    </div>
-                    
-                    <div class="payment-status">
-                        <label>Payment Status:</label>
-                        <div class="status-radio">
-                            <input type="radio" id="paid" name="payment-status" value="paid">
-                            <label for="paid">Paid</label>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-select">Select Product</label>
+                                <select id="product-select" required>
+                                    <option value="">Select a product</option>
+                                    <!-- Products will be loaded from Firebase -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-qty-input">Quantity</label>
+                                <input type="number" id="product-qty-input" placeholder="Quantity" min="1" value="1" required>
+                            </div>
                         </div>
-                        <div class="status-radio">
-                            <input type="radio" id="unpaid" name="payment-status" value="unpaid" checked>
-                            <label for="unpaid">Unpaid</label>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-desc-input">Description (Optional)</label>
+                                <textarea id="product-desc-input" placeholder="Product description"></textarea>
+                            </div>
                         </div>
-                    </div>
+                        
+                        <div class="actions">
+                            <button type="submit" class="btn btn-success">Add Product</button>
+                            <button type="button" class="btn btn-primary" id="finish-order-btn">Finish Order</button>
+                        </div>
+                    </form>
                     
-                    <div class="actions">
-                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Trip</button>
+                    <div class="product-list-table" id="product-list-table" style="margin-top: 20px; display: none;">
+                        <h4>Added Products</h4>
+                        <table class="customer-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Boat Naalu</th>
+                                    <th>Trip No</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="added-products-table">
+                                <!-- Added products will be listed here -->
+                            </tbody>
+                        </table>
                     </div>
-                </form>
+                </div>
             </div>
             
             <!-- POS System Section -->
             <div class="pos-section" id="pos-section">
                 <div class="island-selector">
-                    <label for="pos-island">Select Island to View Trips:</label>
+                    <label for="pos-island">Select Island to View Customers:</label>
                     <select id="pos-island">
                         <option value="all">All Islands</option>
                         <!-- Islands will be loaded from Firebase -->
@@ -988,40 +1207,35 @@
                 </div>
                 
                 <div class="search-container">
-                    <input type="text" id="search-trips" placeholder="Search by customer name, contact, or invoice ID...">
+                    <input type="text" id="search-customers" placeholder="Search by customer name or contact...">
                 </div>
                 
-                <div class="total-trips-value" id="total-trips-value">
-                    Total Trips: 0 | Total Value: 0 RF
+                <div class="customer-list" id="customer-list">
+                    <h3>Customers</h3>
+                    <table class="customer-table">
+                        <thead>
+                            <tr>
+                                <th>Customer Name</th>
+                                <th>Contact</th>
+                                <th>Island</th>
+                                <th>Orders</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-table-body">
+                            <!-- Customers will be listed here -->
+                        </tbody>
+                    </table>
                 </div>
                 
-                <div class="pos-container">
-                    <div class="trip-list" id="trip-list">
-                        <h3>Recent Trips</h3>
-                        <!-- Trip cards will be generated here -->
-                    </div>
-                    
-                    <div class="invoice-preview" id="invoice-preview">
-                        <div class="invoice-header">
-                            <h2>Invoice Preview</h2>
-                            <p>Select a trip to view details</p>
+                <!-- Customer Orders Modal -->
+                <div id="customer-orders-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 id="modal-customer-name">Customer Orders</h2>
+                        <div id="customer-orders-list">
+                            <!-- Customer orders will be listed here -->
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Combined Invoice Section -->
-                <div class="combined-invoice">
-                    <h3>Combined Invoice for Customer</h3>
-                    <div class="customer-selector">
-                        <label for="customer-select">Select Customer:</label>
-                        <select id="customer-select">
-                            <option value="">Select a customer</option>
-                            <!-- Customers will be loaded dynamically -->
-                        </select>
-                    </div>
-                    <div class="combined-invoice-actions">
-                        <button class="btn btn-primary" id="generate-combined-invoice">Generate Combined Invoice</button>
-                        <button class="btn btn-success" id="send-combined-pdf">Send Combined PDF via Viber</button>
                     </div>
                 </div>
             </div>
@@ -1038,8 +1252,26 @@
                     </div>
                     
                     <div class="island-list" id="island-list">
-                        <h3>Available Islands</3>
+                        <h3>Available Islands</h3>
                         <!-- Islands will be listed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Management Section -->
+            <div class="product-section" id="product-section">
+                <h2>Product Management</h2>
+                <p>Add and remove products for your boat trips</p>
+                
+                <div class="product-management">
+                    <div class="product-form">
+                        <input type="text" id="new-product" placeholder="Enter new product name">
+                        <button class="btn btn-primary" id="add-product"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div class="product-list" id="product-list">
+                        <h3>Available Products</h3>
+                        <!-- Products will be listed here -->
                     </div>
                 </div>
             </div>
@@ -1062,6 +1294,9 @@
         </div>
     </div>
 
+    <!-- Chart.js for Dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         // Initialize jsPDF
         window.jsPDF = window.jspdf.jsPDF;
@@ -1081,6 +1316,15 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
+        // Global variables
+        let currentCustomerId = null;
+        let currentIsland = null;
+        let customerProducts = [];
+        let boatNaalu = "";
+        let tripNumber = "";
+        let productsChart = null;
+        let islandsChart = null;
 
         document.addEventListener('DOMContentLoaded', function() {
             // Show splash screen first
@@ -1111,9 +1355,11 @@
             
             // Tab switching functionality
             const tabs = document.querySelectorAll('.tab');
+            const dashboardSection = document.getElementById('dashboard-section');
             const formSection = document.getElementById('form-section');
             const posSection = document.getElementById('pos-section');
             const islandSection = document.getElementById('island-section');
+            const productSection = document.getElementById('product-section');
             const paymentSection = document.getElementById('payment-section');
             
             tabs.forEach(tab => {
@@ -1121,22 +1367,30 @@
                     tabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     
-                    formSection.style.display = 'none';
-                    posSection.style.display = 'none';
-                    islandSection.style.display = 'none';
-                    paymentSection.style.display = 'none';
+                    dashboardSection.classList.remove('active');
+                    formSection.classList.remove('active');
+                    posSection.classList.remove('active');
+                    islandSection.classList.remove('active');
+                    productSection.classList.remove('active');
+                    paymentSection.classList.remove('active');
                     
-                    if (this.dataset.tab === 'form') {
-                        formSection.style.display = 'block';
+                    if (this.dataset.tab === 'dashboard') {
+                        dashboardSection.classList.add('active');
+                        updateDashboard();
+                    } else if (this.dataset.tab === 'form') {
+                        formSection.classList.add('active');
+                        loadCustomersForSelection();
                     } else if (this.dataset.tab === 'pos') {
-                        posSection.style.display = 'block';
-                        loadTrips();
-                        loadCustomerSelector();
+                        posSection.classList.add('active');
+                        loadCustomers();
                     } else if (this.dataset.tab === 'island') {
-                        islandSection.style.display = 'block';
+                        islandSection.classList.add('active');
                         loadIslands();
+                    } else if (this.dataset.tab === 'product') {
+                        productSection.classList.add('active');
+                        loadProducts();
                     } else if (this.dataset.tab === 'payment') {
-                        paymentSection.style.display = 'block';
+                        paymentSection.classList.add('active');
                         loadPayments('all');
                     }
                 });
@@ -1152,202 +1406,253 @@
                 });
             });
             
-            // Add product row functionality
-            const addProductBtn = document.getElementById('add-product');
-            const productRows = document.getElementById('product-rows');
-            
-            addProductBtn.addEventListener('click', function() {
-                const newRow = document.createElement('div');
-                newRow.className = 'product-row';
-                newRow.innerHTML = `
-                    <div class="product-name">
-                        <input type="text" placeholder="Product name" class="product-input" required>
-                    </div>
-                    <div class="product-unit">
-                        <select class="unit-select">
-                            <option value="Unit">Unit</option>
-                            <option value="Kg">Kg</option>
-                            <option value="Foot">Foot</option>
-                            <option value="Ltr">Ltr</option>
-                            <option value="Kodi">Kodi</option>
-                            <option value="Pcs">Pcs</option>
-                            <option value="Case">Case</option>
-                            <option value="Dozen">Dozen</option>
-                            <option value="Can">Can</option>
-                        </select>
-                    </div>
-                    <div class="product-qty">
-                        <input type="number" placeholder="Qty" class="qty-input" min="1" value="1" required>
-                    </div>
-                    <div class="product-price">
-                        <input type="number" placeholder="Price (RF)" class="price-input" min="0" step="0.01">
-                    </div>
-                    <div class="product-desc">
-                        <input type="text" placeholder="Description (optional)" class="desc-input">
-                    </div>
-                    <div class="product-actions">
-                        <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                
-                productRows.appendChild(newRow);
-                
-                // Add event listener to the remove button
-                newRow.querySelector('.remove-product').addEventListener('click', function() {
-                    if (document.querySelectorAll('.product-row').length > 1) {
-                        newRow.remove();
-                    } else {
-                        alert('You need at least one product!');
-                    }
-                });
-            });
-            
-            // Add event listeners to initial remove buttons
-            document.querySelectorAll('.remove-product').forEach(button => {
-                button.addEventListener('click', function() {
-                    if (document.querySelectorAll('.product-row').length > 1) {
-                        this.closest('.product-row').remove();
-                    } else {
-                        alert('You need at least one product!');
-                    }
-                });
-            });
-            
-            // Form submission
-            const tripForm = document.getElementById('trip-form');
-            
-            tripForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Get form values
-                const date = document.getElementById('trip-date').value;
-                const island = document.getElementById('island').value;
-                const customerName = document.getElementById('customer-name').value;
-                const contact = document.getElementById('contact').value;
-                const receiverName = document.getElementById('receiver-name').value;
-                const receiverContact = document.getElementById('receiver-contact').value;
-                const paymentStatus = document.querySelector('input[name="payment-status"]:checked').value;
-                
-                // Get products
-                const products = [];
-                document.querySelectorAll('.product-row').forEach(row => {
-                    const productName = row.querySelector('.product-input').value;
-                    const unit = row.querySelector('.unit-select').value;
-                    const qty = row.querySelector('.qty-input').value;
-                    const price = row.querySelector('.price-input').value;
-                    const description = row.querySelector('.desc-input').value;
-                    
-                    if (productName) {
-                        products.push({
-                            productName,
-                            unit,
-                            qty,
-                            price,
-                            description
-                        });
-                    }
-                });
-                
-                // Validate form
-                if (!date || !island || !customerName || !contact || products.length === 0) {
-                    alert('Please fill in all required fields and add at least one product!');
+            // New customer button
+            document.getElementById('new-customer-btn').addEventListener('click', function() {
+                const islandSelect = document.getElementById('island');
+                if (!islandSelect.value) {
+                    alert('Please select an island first!');
                     return;
                 }
                 
-                // Create trip object
-                const trip = {
+                currentIsland = islandSelect.value;
+                document.getElementById('customer-registration').style.display = 'block';
+                document.getElementById('customer-selection').style.display = 'none';
+            });
+            
+            // Customer selection change
+            document.getElementById('customer-select').addEventListener('change', function() {
+                if (this.value) {
+                    currentCustomerId = this.value;
+                    document.getElementById('product-details').style.display = 'block';
+                    document.getElementById('customer-registration').style.display = 'none';
+                    
+                    // Load customer details if needed
+                    database.ref('customers/' + currentCustomerId).once('value').then((snapshot) => {
+                        const customer = snapshot.val();
+                        if (customer) {
+                            document.getElementById('customer-name').value = customer.name;
+                            document.getElementById('contact').value = customer.contact;
+                            document.getElementById('address').value = customer.address || '';
+                        }
+                    });
+                }
+            });
+            
+            // Customer form submission
+            document.getElementById('customer-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const customerName = document.getElementById('customer-name').value;
+                const contact = document.getElementById('contact').value;
+                const address = document.getElementById('address').value;
+                
+                if (!customerName || !contact) {
+                    alert('Please fill in all required fields!');
+                    return;
+                }
+                
+                // Create customer object
+                const customer = {
                     id: Date.now(), // Unique ID
-                    date,
-                    island,
-                    customerName,
-                    contact,
-                    receiverName,
-                    receiverContact,
-                    products,
-                    paymentStatus,
-                    totalAmount: products.reduce((sum, product) => sum + (parseFloat(product.price || 0) * parseInt(product.qty)), 0)
+                    name: customerName,
+                    contact: contact,
+                    address: address,
+                    island: currentIsland
                 };
                 
                 // Save to Firebase
-                saveTrip(trip);
+                saveCustomer(customer);
                 
-                // Reset form
-                tripForm.reset();
-                // Reset products to one row
-                document.querySelectorAll('.product-row').forEach((row, index) => {
-                    if (index > 0) row.remove();
+                // Store customer ID for product entry
+                currentCustomerId = customer.id;
+                
+                // Show product entry form
+                document.getElementById('product-details').style.display = 'block';
+                
+                // Add to customer selection dropdown
+                const option = document.createElement('option');
+                option.value = customer.id;
+                option.textContent = customer.name + ' (' + customer.contact + ')';
+                document.getElementById('customer-select').appendChild(option);
+                
+                alert('Customer saved successfully! Now you can add products.');
+            });
+            
+            // Generate trip number
+            document.getElementById('generate-trip-number').addEventListener('click', function() {
+                const date = new Date();
+                const year = date.getFullYear().toString().substr(-2);
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                
+                tripNumber = `TR${year}${month}${day}${random}`;
+                document.getElementById('trip-number').value = tripNumber;
+            });
+            
+            // Update boat naalu
+            document.getElementById('update-naalu').addEventListener('click', function() {
+                boatNaalu = document.getElementById('boat-naalu').value;
+                if (!boatNaalu) {
+                    alert('Please enter a boat naalu value!');
+                    return;
+                }
+                alert('Boat Naalu updated to: ' + boatNaalu);
+            });
+            
+            // Add products button
+            document.getElementById('add-products-btn').addEventListener('click', function() {
+                document.getElementById('product-details').style.display = 'block';
+            });
+            
+            // Product form submission
+            document.getElementById('product-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!currentCustomerId) {
+                    alert('Please select or create a customer first!');
+                    return;
+                }
+                
+                if (!tripNumber) {
+                    alert('Please generate a trip number first!');
+                    return;
+                }
+                
+                if (!boatNaalu) {
+                    alert('Please enter boat naalu first!');
+                    return;
+                }
+                
+                const productId = document.getElementById('product-select').value;
+                const productName = document.getElementById('product-select').options[document.getElementById('product-select').selectedIndex].text;
+                const qty = document.getElementById('product-qty-input').value;
+                const description = document.getElementById('product-desc-input').value;
+                const date = document.getElementById('product-date').value;
+                const time = document.getElementById('product-time').value;
+                
+                if (!productId || !qty) {
+                    alert('Please select a product and enter quantity!');
+                    return;
+                }
+                
+                // Add product to the list
+                customerProducts.push({
+                    productId,
+                    productName,
+                    qty,
+                    description,
+                    date,
+                    time,
+                    boatNaalu,
+                    tripNumber
                 });
                 
-                // Set today's date
-                document.getElementById('trip-date').valueAsDate = new Date();
+                // Update the products table
+                updateProductsTable();
                 
-                alert('Trip saved successfully!');
+                // Reset form
+                document.getElementById('product-form').reset();
+                document.getElementById('product-date').valueAsDate = new Date();
+                
+                alert('Product added to order!');
+            });
+            
+            // Finish order button
+            document.getElementById('finish-order-btn').addEventListener('click', function() {
+                if (customerProducts.length === 0) {
+                    alert('Please add at least one product to the order!');
+                    return;
+                }
+                
+                // Create order object
+                const order = {
+                    id: Date.now(), // Unique ID
+                    customerId: currentCustomerId,
+                    products: customerProducts,
+                    date: new Date().toISOString(),
+                    paymentStatus: 'unpaid',
+                    tripNumber: tripNumber,
+                    boatNaalu: boatNaalu
+                };
+                
+                // Save to Firebase
+                saveOrder(order);
+                
+                // Reset forms
+                document.getElementById('customer-form').reset();
+                document.getElementById('product-form').reset();
+                document.getElementById('customer-registration').style.display = 'none';
+                document.getElementById('product-details').style.display = 'none';
+                document.getElementById('product-list-table').style.display = 'none';
+                document.getElementById('customer-selection').style.display = 'block';
+                
+                // Reset variables
+                currentCustomerId = null;
+                currentIsland = null;
+                customerProducts = [];
+                boatNaalu = "";
+                tripNumber = "";
+                
+                // Reset customer selection
+                document.getElementById('customer-select').value = '';
+                document.getElementById('island').value = '';
+                
+                alert('Order saved successfully!');
             });
             
             // Add island functionality
-            const addIslandBtn = document.getElementById('add-island');
-            const newIslandInput = document.getElementById('new-island');
-            
-            addIslandBtn.addEventListener('click', function() {
-                const islandName = newIslandInput.value.trim();
+            document.getElementById('add-island').addEventListener('click', function() {
+                const islandName = document.getElementById('new-island').value.trim();
                 if (islandName) {
                     addIsland(islandName);
-                    newIslandInput.value = '';
+                    document.getElementById('new-island').value = '';
                 } else {
                     alert('Please enter an island name!');
                 }
             });
             
+            // Add product functionality
+            document.getElementById('add-product').addEventListener('click', function() {
+                const productName = document.getElementById('new-product').value.trim();
+                if (productName) {
+                    addProduct(productName);
+                    document.getElementById('new-product').value = '';
+                } else {
+                    alert('Please enter a product name!');
+                }
+            });
+            
             // POS Island filter
-            const posIsland = document.getElementById('pos-island');
-            posIsland.addEventListener('change', loadTrips);
+            document.getElementById('pos-island').addEventListener('change', loadCustomers);
             
             // Search functionality
-            const searchInput = document.getElementById('search-trips');
-            searchInput.addEventListener('input', function() {
-                loadTrips(this.value);
+            document.getElementById('search-customers').addEventListener('input', function() {
+                loadCustomers(this.value);
             });
             
-            // Combined invoice functionality
-            const generateCombinedInvoiceBtn = document.getElementById('generate-combined-invoice');
-            const sendCombinedPdfBtn = document.getElementById('send-combined-pdf');
-            
-            generateCombinedInvoiceBtn.addEventListener('click', function() {
-                const customerSelect = document.getElementById('customer-select');
-                const customerName = customerSelect.value;
-                
-                if (!customerName) {
-                    alert('Please select a customer first!');
-                    return;
-                }
-                
-                generateCombinedInvoice(customerName);
-            });
-            
-            sendCombinedPdfBtn.addEventListener('click', function() {
-                const customerSelect = document.getElementById('customer-select');
-                const customerName = customerSelect.value;
-                
-                if (!customerName) {
-                    alert('Please select a customer first!');
-                    return;
-                }
-                
-                generateCombinedPdf(customerName);
+            // Modal close functionality
+            document.querySelector('.close').addEventListener('click', function() {
+                document.getElementById('customer-orders-modal').style.display = 'none';
             });
             
             // Initialize with today's date
-            document.getElementById('trip-date').valueAsDate = new Date();
+            document.getElementById('product-date').valueAsDate = new Date();
             
             // Data functions
             function initializeData() {
-                // Load islands from Firebase
+                // Load islands and products from Firebase
                 loadIslandsFromFirebase();
+                loadProductsFromFirebase();
                 
-                // Set up real-time listener for trips
-                database.ref('trips').on('value', (snapshot) => {
-                    loadTrips();
-                    loadCustomerSelector();
+                // Set up real-time listeners
+                database.ref('customers').on('value', () => {
+                    loadCustomers();
+                    loadCustomersForSelection();
+                });
+                database.ref('orders').on('value', () => {
+                    loadCustomers();
+                    updateDashboard();
                 });
             }
             
@@ -1362,6 +1667,21 @@
                         });
                     } else {
                         updateIslandSelects(islands);
+                    }
+                });
+            }
+            
+            function loadProductsFromFirebase() {
+                database.ref('products').once('value').then((snapshot) => {
+                    const products = snapshot.val();
+                    if (!products) {
+                        // Add default products if none exist
+                        const defaultProducts = ['Rice', 'Flour', 'Sugar', 'Oil', 'Tea'];
+                        database.ref('products').set(defaultProducts).then(() => {
+                            updateProductSelect(defaultProducts);
+                        });
+                    } else {
+                        updateProductSelect(products);
                     }
                 });
             }
@@ -1390,6 +1710,42 @@
                     posOption.value = island;
                     posOption.textContent = island;
                     posIslandSelect.appendChild(posOption);
+                });
+            }
+            
+            function updateProductSelect(products) {
+                const productSelect = document.getElementById('product-select');
+                
+                // Clear existing options except the first one
+                while (productSelect.options.length > 1) {
+                    productSelect.remove(1);
+                }
+                
+                // Add products to select
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product;
+                    option.textContent = product;
+                    productSelect.appendChild(option);
+                });
+            }
+            
+            function loadCustomersForSelection() {
+                const customerSelect = document.getElementById('customer-select');
+                
+                // Clear existing options except the first one
+                while (customerSelect.options.length > 1) {
+                    customerSelect.remove(1);
+                }
+                
+                // Get customers from Firebase
+                getCustomers((customers) => {
+                    customers.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer.id;
+                        option.textContent = customer.name + ' (' + customer.contact + ')';
+                        customerSelect.appendChild(option);
+                    });
                 });
             }
             
@@ -1428,6 +1784,41 @@
                 });
             }
             
+            function loadProducts() {
+                const productList = document.getElementById('product-list');
+                
+                database.ref('products').once('value').then((snapshot) => {
+                    const products = snapshot.val();
+                    
+                    // Clear current list
+                    productList.innerHTML = '<h3>Available Products</h3>';
+                    
+                    if (!products || products.length === 0) {
+                        productList.innerHTML += '<p>No products added yet.</p>';
+                        return;
+                    }
+                    
+                    // Create product items
+                    products.forEach(product => {
+                        const productItem = document.createElement('div');
+                        productItem.className = 'product-item';
+                        productItem.innerHTML = `
+                            <div class="product-name">${product}</div>
+                            <button class="btn btn-danger btn-sm delete-product" data-product="${product}"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        
+                        productList.appendChild(productItem);
+                        
+                        // Add event listener to delete button
+                        productItem.querySelector('.delete-product').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete ${product}?`)) {
+                                deleteProduct(product);
+                            }
+                        });
+                    });
+                });
+            }
+            
             function addIsland(islandName) {
                 database.ref('islands').once('value').then((snapshot) => {
                     const islands = snapshot.val() || [];
@@ -1456,493 +1847,293 @@
                 });
             }
             
-            function saveTrip(trip) {
-                database.ref('trips/' + trip.id).set(trip);
-            }
-            
-            function getTrips(callback) {
-                database.ref('trips').once('value').then((snapshot) => {
-                    const trips = snapshot.val();
-                    const tripsArray = trips ? Object.values(trips) : [];
-                    callback(tripsArray);
+            function addProduct(productName) {
+                database.ref('products').once('value').then((snapshot) => {
+                    const products = snapshot.val() || [];
+                    if (!products.includes(productName)) {
+                        products.push(productName);
+                        database.ref('products').set(products).then(() => {
+                            updateProductSelect(products);
+                            loadProducts();
+                            alert('Product added successfully!');
+                        });
+                    } else {
+                        alert('This product already exists!');
+                    }
                 });
             }
             
-            function deleteTrip(id) {
-                database.ref('trips/' + id).remove().then(() => {
-                    loadTrips();
-                    document.getElementById('invoice-preview').innerHTML = `
-                        <div class="invoice-header">
-                            <h2>Invoice Preview</h2>
-                            <p>Select a trip to view details</p>
-                        </div>
-                    `;
-                });
-            }
-            
-            function updatePaymentStatus(id, status) {
-                database.ref('trips/' + id + '/paymentStatus').set(status);
-            }
-            
-            function updateTripPrice(id, productIndex, price) {
-                database.ref('trips/' + id + '/products/' + productIndex + '/price').set(price);
-            }
-            
-            // Load customer selector for combined invoices
-            function loadCustomerSelector() {
-                const customerSelect = document.getElementById('customer-select');
-                
-                // Clear existing options except the first one
-                while (customerSelect.options.length > 1) {
-                    customerSelect.remove(1);
-                }
-                
-                // Get trips from Firebase
-                getTrips((trips) => {
-                    // Get unique customer names
-                    const customers = [...new Set(trips.map(trip => trip.customerName))];
-                    
-                    // Add customers to select
-                    customers.forEach(customer => {
-                        const option = document.createElement('option');
-                        option.value = customer;
-                        option.textContent = customer;
-                        customerSelect.appendChild(option);
+            function deleteProduct(productName) {
+                database.ref('products').once('value').then((snapshot) => {
+                    const products = snapshot.val();
+                    const updatedProducts = products.filter(product => product !== productName);
+                    database.ref('products').set(updatedProducts).then(() => {
+                        updateProductSelect(updatedProducts);
+                        loadProducts();
+                        alert('Product deleted successfully!');
                     });
                 });
             }
             
-            // Load trips for POS system
-            function loadTrips(searchTerm = '') {
-                const tripList = document.getElementById('trip-list');
+            function saveCustomer(customer) {
+                database.ref('customers/' + customer.id).set(customer);
+            }
+            
+            function saveOrder(order) {
+                database.ref('orders/' + order.id).set(order);
+            }
+            
+            function getCustomers(callback) {
+                database.ref('customers').once('value').then((snapshot) => {
+                    const customers = snapshot.val();
+                    const customersArray = customers ? Object.values(customers) : [];
+                    callback(customersArray);
+                });
+            }
+            
+            function getOrders(callback) {
+                database.ref('orders').once('value').then((snapshot) => {
+                    const orders = snapshot.val();
+                    const ordersArray = orders ? Object.values(orders) : [];
+                    callback(ordersArray);
+                });
+            }
+            
+            function getCustomerOrders(customerId, callback) {
+                database.ref('orders').once('value').then((snapshot) => {
+                    const orders = snapshot.val();
+                    const ordersArray = orders ? Object.values(orders) : [];
+                    const customerOrders = ordersArray.filter(order => order.customerId == customerId);
+                    callback(customerOrders);
+                });
+            }
+            
+            function updateProductsTable() {
+                const tableBody = document.getElementById('added-products-table');
+                tableBody.innerHTML = '';
+                
+                customerProducts.forEach((product, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.productName}</td>
+                        <td>${product.qty}</td>
+                        <td>${product.boatNaalu}</td>
+                        <td>${product.tripNumber}</td>
+                        <td>${product.description || '-'}</td>
+                        <td>${product.date} ${product.time}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm remove-product" data-index="${index}">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    
+                    // Add event listener to remove button
+                    row.querySelector('.remove-product').addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        customerProducts.splice(index, 1);
+                        updateProductsTable();
+                    });
+                });
+                
+                document.getElementById('product-list-table').style.display = 'block';
+            }
+            
+            function loadCustomers(searchTerm = '') {
+                const customerTableBody = document.getElementById('customer-table-body');
                 const islandFilter = document.getElementById('pos-island').value;
-                const totalTripsValue = document.getElementById('total-trips-value');
                 
-                // Clear current list
-                tripList.innerHTML = '<h3>Recent Trips</h3>';
+                // Clear current table
+                customerTableBody.innerHTML = '';
                 
-                // Get trips from Firebase
-                getTrips((trips) => {
-                    // Filter by island if needed
-                    let filteredTrips = islandFilter === 'all' 
-                        ? trips 
-                        : trips.filter(trip => trip.island === islandFilter);
-                    
-                    // Filter by search term if provided
-                    if (searchTerm) {
-                        const term = searchTerm.toLowerCase();
-                        filteredTrips = filteredTrips.filter(trip => 
-                            trip.customerName.toLowerCase().includes(term) ||
-                            trip.contact.toLowerCase().includes(term) ||
-                            trip.id.toString().includes(term)
-                        );
-                    }
-                    
-                    // Calculate total trips and total value
-                    const totalTrips = filteredTrips.length;
-                    const totalValue = filteredTrips.reduce((sum, trip) => sum + (trip.totalAmount || 0), 0);
-                    
-                    // Update total trips value display
-                    totalTripsValue.textContent = `Total Trips: ${totalTrips} | Total Value: ${totalValue.toFixed(2)} RF`;
-                    
-                    if (filteredTrips.length === 0) {
-                        tripList.innerHTML += '<p>No trips found.</p>';
+                // Get customers and orders from Firebase
+                getCustomers((customers) => {
+                    getOrders((orders) => {
+                        // Filter by island if needed
+                        let filteredCustomers = islandFilter === 'all' 
+                            ? customers 
+                            : customers.filter(customer => customer.island === islandFilter);
+                        
+                        // Filter by search term if provided
+                        if (searchTerm) {
+                            const term = searchTerm.toLowerCase();
+                            filteredCustomers = filteredCustomers.filter(customer => 
+                                customer.name.toLowerCase().includes(term) ||
+                                customer.contact.toLowerCase().includes(term)
+                            );
+                        }
+                        
+                        if (filteredCustomers.length === 0) {
+                            customerTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No customers found.</td></tr>';
+                            return;
+                        }
+                        
+                        // Create customer rows
+                        filteredCustomers.forEach(customer => {
+                            // Count orders for this customer
+                            const customerOrders = orders.filter(order => order.customerId == customer.id);
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${customer.name}</td>
+                                <td>${customer.contact}</td>
+                                <td>${customer.island}</td>
+                                <td>${customerOrders.length}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm view-orders" data-id="${customer.id}" data-name="${customer.name}">
+                                        <i class="fas fa-eye"></i> View Orders
+                                    </button>
+                                </td>
+                            `;
+                            customerTableBody.appendChild(row);
+                            
+                            // Add event listener to view orders button
+                            row.querySelector('.view-orders').addEventListener('click', function() {
+                                const customerId = this.dataset.id;
+                                const customerName = this.dataset.name;
+                                showCustomerOrders(customerId, customerName);
+                            });
+                        });
+                    });
+                });
+            }
+            
+            function showCustomerOrders(customerId, customerName) {
+                const modal = document.getElementById('customer-orders-modal');
+                const customerOrdersList = document.getElementById('customer-orders-list');
+                const modalCustomerName = document.getElementById('modal-customer-name');
+                
+                modalCustomerName.textContent = `Orders for ${customerName}`;
+                customerOrdersList.innerHTML = '<p>Loading orders...</p>';
+                
+                modal.style.display = 'block';
+                
+                getCustomerOrders(customerId, (orders) => {
+                    if (orders.length === 0) {
+                        customerOrdersList.innerHTML = '<p>No orders found for this customer.</p>';
                         return;
                     }
                     
-                    // Sort trips by date (newest first)
-                    filteredTrips.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    customerOrdersList.innerHTML = '';
                     
-                    // Create trip cards
-                    filteredTrips.forEach(trip => {
-                        const tripCard = document.createElement('div');
-                        tripCard.className = 'trip-card';
-                        tripCard.dataset.id = trip.id;
+                    orders.forEach(order => {
+                        const orderDate = new Date(order.date).toLocaleDateString();
                         
-                        // Format date
-                        const tripDate = new Date(trip.date).toLocaleDateString();
-                        
-                        // Calculate total items
-                        const totalItems = trip.products.reduce((sum, product) => sum + parseInt(product.qty), 0);
-                        
-                        tripCard.innerHTML = `
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'trip-card';
+                        orderCard.innerHTML = `
                             <div class="trip-header">
-                                <div class="trip-island">${trip.island}</div>
-                                <div class="trip-date">${tripDate}</div>
-                            </div>
-                            <div class="trip-customer">
-                                <strong>Customer:</strong> ${trip.customerName}
+                                <div class="trip-date">${orderDate}</div>
+                                <div class="trip-status ${order.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                    ${order.paymentStatus.toUpperCase()}
+                                </div>
                             </div>
                             <div class="trip-products">
-                                <strong>Products:</strong> ${totalItems} items
+                                <strong>Trip Number:</strong> ${order.tripNumber}<br>
+                                <strong>Boat Naalu:</strong> ${order.boatNaalu}<br>
+                                <strong>Products:</strong>
+                                <ul>
+                                    ${order.products.map(product => `
+                                        <li>${product.productName} - ${product.qty} (${product.date} ${product.time})</li>
+                                    `).join('')}
+                                </ul>
                             </div>
-                            <div class="trip-footer">
-                                <div class="trip-amount">${trip.totalAmount ? trip.totalAmount.toFixed(2) + ' RF' : 'Price not set'}</div>
-                                <div class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
-                                    ${trip.paymentStatus.toUpperCase()}
-                                </div>
-                                <div class="trip-actions">
-                                    <button class="btn btn-primary btn-sm view-btn">View</button>
-                                    <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                </div>
+                            <div class="trip-actions">
+                                <button class="btn btn-primary btn-sm generate-invoice" data-id="${order.id}">
+                                    <i class="fas fa-file-pdf"></i> Generate Invoice
+                                </button>
+                                ${order.paymentStatus === 'unpaid' ? 
+                                    `<button class="btn btn-success btn-sm mark-paid" data-id="${order.id}">
+                                        <i class="fas fa-check"></i> Mark as Paid
+                                    </button>` : 
+                                    `<button class="btn btn-warning btn-sm mark-unpaid" data-id="${order.id}">
+                                        <i class="fas fa-times"></i> Mark as Unpaid
+                                    </button>`
+                                }
+                                <button class="btn btn-warning btn-sm add-more-products" data-id="${order.id}" data-customer="${customerId}">
+                                    <i class="fas fa-plus"></i> Add More Products
+                                </button>
                             </div>
                         `;
                         
-                        tripList.appendChild(tripCard);
+                        customerOrdersList.appendChild(orderCard);
                         
                         // Add event listeners
-                        tripCard.querySelector('.view-btn').addEventListener('click', function() {
-                            showInvoice(trip);
+                        orderCard.querySelector('.generate-invoice').addEventListener('click', function() {
+                            generateOrderInvoice(order);
                         });
                         
-                        tripCard.querySelector('.delete-btn').addEventListener('click', function() {
-                            if (confirm('Are you sure you want to delete this trip?')) {
-                                deleteTrip(trip.id);
-                            }
-                        });
-                    });
-                });
-            }
-            
-            // Show invoice function
-            function showInvoice(trip) {
-                const invoicePreview = document.getElementById('invoice-preview');
-                
-                // Format date
-                const tripDate = new Date(trip.date).toLocaleDateString();
-                
-                // Calculate total amount
-                const totalAmount = trip.products.reduce((sum, product) => {
-                    return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                }, 0);
-                
-                // Check if mobile device
-                const isMobile = window.innerWidth <= 767;
-                
-                invoicePreview.innerHTML = `
-                    <div class="invoice-header">
-                        <h2>INVOICE</h2>
-                        <p>NIYAAMAA BOAT</p>
-                    </div>
-                    
-                    <div class="invoice-details">
-                        <div>
-                            <p><strong>Invoice ID:</strong> BT${trip.id}</p>
-                            <p><strong>Date:</strong> ${tripDate}</p>
-                            <p><strong>Island:</strong> ${trip.island}</p>
-                        </div>
-                        <div>
-                            <p><strong>Customer:</strong> ${trip.customerName}</p>
-                            <p><strong>Contact:</strong> ${trip.contact}</p>
-                            <p><strong>Status:</strong> <span class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">${trip.paymentStatus.toUpperCase()}</span></p>
-                        </div>
-                    </div>
-                    
-                    <div style="overflow-x: auto;">
-                        <table class="invoice-products">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Unit</th>
-                                    <th>Qty</th>
-                                    <th>${isMobile ? 'Boat Naalu' : 'Unit Price'} (RF)</th>
-                                    <th>Total (RF)</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${trip.products.map((product, index) => `
-                                    <tr>
-                                        <td>${product.productName}</td>
-                                        <td>${product.unit}</td>
-                                        <td>${product.qty}</td>
-                                        <td>
-                                            <input type="number" value="${product.price || 0}" step="0.01" 
-                                                class="price-edit" data-id="${trip.id}" data-index="${index}" 
-                                                style="width: 70px; padding: 4px; font-size: 12px;">
-                                        </td>
-                                        <td>${(parseFloat(product.price || 0) * parseInt(product.qty)).toFixed(2)}</td>
-                                        <td>
-                                            <button class="btn btn-xs btn-primary update-price" 
-                                                data-id="${trip.id}" data-index="${index}">Update</button>
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="invoice-total">
-                        Total Amount: ${totalAmount.toFixed(2)} RF
-                    </div>
-                    
-                    <div class="bank-details">
-                        <h3>Bank Transfer Details</h3>
-                        <p><strong>Bank Name:</strong> Maldives Islamic Bank</p>
-                        <p><strong>Account Name:</strong> RIHAAKURU ISLAND</p>
-                        <p><strong>Account Number:</strong> 90101400028101002</p>
-                        <p><strong>Reference:</strong> BT${trip.id} - ${trip.customerName}</p>
-                    </div>
-                    
-                    <div class="invoice-actions">
-                        <button class="btn btn-success" id="print-invoice">Print Invoice</button>
-                        <button class="btn btn-primary" id="send-invoice">Send via WhatsApp</button>
-                        <button class="btn btn-info" id="send-viber">Send via Viber</button>
-                        ${trip.paymentStatus === 'unpaid' ? 
-                            `<button class="btn btn-primary" id="mark-paid">Mark as Paid</button>` : 
-                            `<button class="btn btn-warning" id="mark-unpaid">Mark as Unpaid</button>`
-                        }
-                    </div>
-                `;
-                
-                // Add event listeners for price updates
-                invoicePreview.querySelectorAll('.update-price').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const tripId = this.dataset.id;
-                        const productIndex = this.dataset.index;
-                        const priceInput = invoicePreview.querySelector(`.price-edit[data-id="${tripId}"][data-index="${productIndex}"]`);
-                        const newPrice = parseFloat(priceInput.value);
-                        
-                        if (!isNaN(newPrice) && newPrice >= 0) {
-                            updateTripPrice(tripId, productIndex, newPrice);
-                            alert('Price updated successfully!');
-                            // Reload the invoice to reflect changes
-                            getTrips((trips) => {
-                                const updatedTrip = trips.find(t => t.id == tripId);
-                                if (updatedTrip) showInvoice(updatedTrip);
+                        if (order.paymentStatus === 'unpaid') {
+                            orderCard.querySelector('.mark-paid').addEventListener('click', function() {
+                                updateOrderPaymentStatus(order.id, 'paid');
+                                alert('Order marked as paid!');
+                                showCustomerOrders(customerId, customerName);
                             });
                         } else {
-                            alert('Please enter a valid price!');
+                            orderCard.querySelector('.mark-unpaid').addEventListener('click', function() {
+                                updateOrderPaymentStatus(order.id, 'unpaid');
+                                alert('Order marked as unpaid!');
+                                showCustomerOrders(customerId, customerName);
+                            });
                         }
-                    });
-                });
-                
-                // Add event listeners for invoice actions
-                document.getElementById('print-invoice').addEventListener('click', function() {
-                    window.print();
-                });
-                
-                document.getElementById('send-invoice').addEventListener('click', function() {
-                    const message = `Invoice BT${trip.id} for ${trip.customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
-                    const whatsappUrl = `https://wa.me/${trip.contact.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
-                    window.open(whatsappUrl, '_blank');
-                });
-                
-                // Viber sharing functionality with PDF
-                document.getElementById('send-viber').addEventListener('click', function() {
-                    generatePdfInvoice(trip, true);
-                });
-                
-                if (trip.paymentStatus === 'unpaid') {
-                    document.getElementById('mark-paid').addEventListener('click', function() {
-                        updatePaymentStatus(trip.id, 'paid');
-                        alert('Trip marked as paid!');
-                        getTrips((trips) => {
-                            const updatedTrip = trips.find(t => t.id == trip.id);
-                            if (updatedTrip) showInvoice(updatedTrip);
+                        
+                        // Add more products to existing order
+                        orderCard.querySelector('.add-more-products').addEventListener('click', function() {
+                            const orderId = this.dataset.id;
+                            const customerId = this.dataset.customer;
+                            
+                            // Switch to form tab
+                            document.querySelector('[data-tab="form"]').click();
+                            
+                            // Load customer data
+                            database.ref('customers/' + customerId).once('value').then((snapshot) => {
+                                const customer = snapshot.val();
+                                if (customer) {
+                                    // Set island
+                                    document.getElementById('island').value = customer.island;
+                                    currentIsland = customer.island;
+                                    
+                                    // Set customer
+                                    document.getElementById('customer-select').value = customerId;
+                                    currentCustomerId = customerId;
+                                    
+                                    // Load order data
+                                    database.ref('orders/' + orderId).once('value').then((snapshot) => {
+                                        const order = snapshot.val();
+                                        if (order) {
+                                            // Set trip number and boat naalu
+                                            document.getElementById('trip-number').value = order.tripNumber;
+                                            tripNumber = order.tripNumber;
+                                            document.getElementById('boat-naalu').value = order.boatNaalu;
+                                            boatNaalu = order.boatNaalu;
+                                            
+                                            // Set products
+                                            customerProducts = order.products;
+                                            updateProductsTable();
+                                            
+                                            // Show product form
+                                            document.getElementById('product-details').style.display = 'block';
+                                            document.getElementById('customer-selection').style.display = 'none';
+                                            
+                                            alert('You can now add more products to this order.');
+                                        }
+                                    });
+                                }
+                            });
                         });
                     });
-                } else {
-                    document.getElementById('mark-unpaid').addEventListener('click', function() {
-                        updatePaymentStatus(trip.id, 'unpaid');
-                        alert('Trip marked as unpaid!');
-                        getTrips((trips) => {
-                            const updatedTrip = trips.find(t => t.id == trip.id);
-                            if (updatedTrip) showInvoice(updatedTrip);
-                        });
-                    });
-                }
-            }
-            
-            // Generate PDF invoice
-            function generatePdfInvoice(trip, shareViaViber = false) {
-                const doc = new jsPDF();
-                
-                // Add logo and header
-                doc.setFontSize(20);
-                doc.setTextColor(26, 42, 108);
-                doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
-                doc.setFontSize(16);
-                doc.text('INVOICE', 105, 30, { align: 'center' });
-                
-                // Add invoice details
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(`Invoice ID: BT${trip.id}`, 20, 45);
-                doc.text(`Date: ${new Date(trip.date).toLocaleDateString()}`, 20, 52);
-                doc.text(`Island: ${trip.island}`, 20, 59);
-                
-                doc.text(`Customer: ${trip.customerName}`, 105, 45);
-                doc.text(`Contact: ${trip.contact}`, 105, 52);
-                doc.text(`Status: ${trip.paymentStatus.toUpperCase()}`, 105, 59);
-                
-                // Add products table
-                const tableColumn = ["Product", "Unit", "Qty", "Price (RF)", "Total (RF)"];
-                const tableRows = [];
-                
-                trip.products.forEach(product => {
-                    const productData = [
-                        product.productName,
-                        product.unit,
-                        product.qty,
-                        parseFloat(product.price || 0).toFixed(2),
-                        (parseFloat(product.price || 0) * parseInt(product.qty)).toFixed(2)
-                    ];
-                    tableRows.push(productData);
-                });
-                
-                // Calculate total amount
-                const totalAmount = trip.products.reduce((sum, product) => {
-                    return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                }, 0);
-                
-                // Add total row
-                tableRows.push(["", "", "", "TOTAL:", totalAmount.toFixed(2)]);
-                
-                doc.autoTable({
-                    head: [tableColumn],
-                    body: tableRows,
-                    startY: 70,
-                    theme: 'grid',
-                    headStyles: {
-                        fillColor: [26, 42, 108],
-                        textColor: [255, 255, 255]
-                    },
-                    footStyles: {
-                        fillColor: [253, 187, 45],
-                        textColor: [0, 0, 0]
-                    }
-                });
-                
-                // Add bank details
-                const lastPage = doc.internal.getNumberOfPages();
-                doc.setPage(lastPage);
-                
-                const finalY = doc.lastAutoTable.finalY + 15;
-                
-                doc.setFontSize(12);
-                doc.setTextColor(26, 42, 108);
-                doc.text('BANK TRANSFER DETAILS', 20, finalY);
-                
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
-                doc.text('Bank Name: Maldives Islamic Bank', 20, finalY + 7);
-                doc.text('Account Name: RIHAAKURU ISLAND', 20, finalY + 14);
-                doc.text('Account Number: 90101400028101002', 20, finalY + 21);
-                doc.text(`Reference: BT${trip.id} - ${trip.customerName}`, 20, finalY + 28);
-                
-                // Save or share the PDF
-                if (shareViaViber) {
-                    // Convert PDF to data URL for sharing
-                    const pdfDataUrl = doc.output('datauristring');
-                    const message = `Invoice BT${trip.id} for ${trip.customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
-                    const viberUrl = `viber://forward?text=${encodeURIComponent(message + ' ' + pdfDataUrl)}`;
-                    window.location.href = viberUrl;
-                } else {
-                    doc.save(`Invoice_BT${trip.id}_${trip.customerName}.pdf`);
-                }
-            }
-            
-            // Generate combined invoice for a customer
-            function generateCombinedInvoice(customerName) {
-                getTrips((trips) => {
-                    const customerTrips = trips.filter(trip => trip.customerName === customerName);
-                    
-                    if (customerTrips.length === 0) {
-                        alert('No trips found for this customer!');
-                        return;
-                    }
-                    
-                    const invoicePreview = document.getElementById('invoice-preview');
-                    
-                    // Calculate total amount across all trips
-                    const totalAmount = customerTrips.reduce((sum, trip) => {
-                        return sum + trip.products.reduce((tripSum, product) => {
-                            return tripSum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                        }, 0);
-                    }, 0);
-                    
-                    invoicePreview.innerHTML = `
-                        <div class="invoice-header">
-                            <h2>COMBINED INVOICE</h2>
-                            <p>NIYAAMAA BOAT</p>
-                        </div>
-                        
-                        <div class="invoice-details">
-                            <div>
-                                <p><strong>Customer:</strong> ${customerName}</p>
-                                <p><strong>Total Trips:</strong> ${customerTrips.length}</p>
-                            </div>
-                            <div>
-                                <p><strong>Generated Date:</strong> ${new Date().toLocaleDateString()}</p>
-                                <p><strong>Total Amount:</strong> ${totalAmount.toFixed(2)} RF</p>
-                            </div>
-                        </div>
-                        
-                        <div style="overflow-x: auto;">
-                            <table class="invoice-products">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Island</th>
-                                        <th>Products</th>
-                                        <th>Total (RF)</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${customerTrips.map(trip => {
-                                        const tripDate = new Date(trip.date).toLocaleDateString();
-                                        const tripAmount = trip.products.reduce((sum, product) => {
-                                            return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                                        }, 0);
-                                        
-                                        return `
-                                            <tr>
-                                                <td>${tripDate}</td>
-                                                <td>${trip.island}</td>
-                                                <td>${trip.products.length} items</td>
-                                                <td>${tripAmount.toFixed(2)}</td>
-                                                <td class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
-                                                    ${trip.paymentStatus.toUpperCase()}
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="invoice-total">
-                            Combined Total Amount: ${totalAmount.toFixed(2)} RF
-                        </div>
-                        
-                        <div class="invoice-actions">
-                            <button class="btn btn-success" id="print-combined-invoice">Print Combined Invoice</button>
-                            <button class="btn btn-info" id="send-combined-viber">Send Combined PDF via Viber</button>
-                        </div>
-                    `;
-                    
-                    // Add event listeners
-                    document.getElementById('print-combined-invoice').addEventListener('click', function() {
-                        window.print();
-                    });
-                    
-                    document.getElementById('send-combined-viber').addEventListener('click', function() {
-                        generateCombinedPdf(customerName);
-                    });
                 });
             }
             
-            // Generate combined PDF for a customer
-            function generateCombinedPdf(customerName) {
-                getTrips((trips) => {
-                    const customerTrips = trips.filter(trip => trip.customerName === customerName);
-                    
-                    if (customerTrips.length === 0) {
-                        alert('No trips found for this customer!');
-                        return;
-                    }
+            function updateOrderPaymentStatus(orderId, status) {
+                database.ref('orders/' + orderId + '/paymentStatus').set(status);
+            }
+            
+            function generateOrderInvoice(order) {
+                // Get customer details
+                database.ref('customers/' + order.customerId).once('value').then((snapshot) => {
+                    const customer = snapshot.val();
                     
                     const doc = new jsPDF();
                     
@@ -1951,65 +2142,66 @@
                     doc.setTextColor(26, 42, 108);
                     doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
                     doc.setFontSize(16);
-                    doc.text('COMBINED INVOICE', 105, 30, { align: 'center' });
+                    doc.text('INVOICE', 105, 30, { align: 'center' });
                     
-                    // Add customer details
+                    // Add invoice details
                     doc.setFontSize(12);
                     doc.setTextColor(0, 0, 0);
-                    doc.text(`Customer: ${customerName}`, 20, 45);
-                    doc.text(`Total Trips: ${customerTrips.length}`, 20, 52);
-                    doc.text(`Generated Date: ${new Date().toLocaleDateString()}`, 20, 59);
+                    doc.text(`Invoice ID: BT${order.id}`, 20, 45);
+                    doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 20, 52);
+                    doc.text(`Island: ${customer.island}`, 20, 59);
+                    doc.text(`Trip Number: ${order.tripNumber}`, 20, 66);
+                    doc.text(`Boat Naalu: ${order.boatNaalu}`, 20, 73);
                     
-                    // Add trips table
-                    const tableColumn = ["Date", "Island", "Products", "Total (RF)", "Status"];
+                    doc.text(`Customer: ${customer.name}`, 105, 45);
+                    doc.text(`Contact: ${customer.contact}`, 105, 52);
+                    doc.text(`Status: ${order.paymentStatus.toUpperCase()}`, 105, 59);
+                    
+                    // Add products table
+                    const tableColumn = ["Product", "Qty", "Date", "Time", "Description"];
                     const tableRows = [];
                     
-                    customerTrips.forEach(trip => {
-                        const tripDate = new Date(trip.date).toLocaleDateString();
-                        const tripAmount = trip.products.reduce((sum, product) => {
-                            return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                        }, 0);
-                        
-                        const tripData = [
-                            tripDate,
-                            trip.island,
-                            `${trip.products.length} items`,
-                            tripAmount.toFixed(2),
-                            trip.paymentStatus.toUpperCase()
+                    order.products.forEach(product => {
+                        const productData = [
+                            product.productName,
+                            product.qty,
+                            product.date,
+                            product.time,
+                            product.description || '-'
                         ];
-                        tableRows.push(tripData);
+                        tableRows.push(productData);
                     });
-                    
-                    // Calculate total amount
-                    const totalAmount = customerTrips.reduce((sum, trip) => {
-                        return sum + trip.products.reduce((tripSum, product) => {
-                            return tripSum + (parseFloat(product.price || 0) * parseInt(product.qty));
-                        }, 0);
-                    }, 0);
-                    
-                    // Add total row
-                    tableRows.push(["", "", "", "COMBINED TOTAL:", totalAmount.toFixed(2)]);
                     
                     doc.autoTable({
                         head: [tableColumn],
                         body: tableRows,
-                        startY: 70,
+                        startY: 80,
                         theme: 'grid',
                         headStyles: {
                             fillColor: [26, 42, 108],
                             textColor: [255, 255, 255]
-                        },
-                        footStyles: {
-                            fillColor: [253, 187, 45],
-                            textColor: [0, 0, 0]
                         }
                     });
                     
-                    // Convert PDF to data URL for sharing
-                    const pdfDataUrl = doc.output('datauristring');
-                    const message = `Combined invoice for ${customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
-                    const viberUrl = `viber://forward?text=${encodeURIComponent(message + ' ' + pdfDataUrl)}`;
-                    window.location.href = viberUrl;
+                    // Add bank details
+                    const lastPage = doc.internal.getNumberOfPages();
+                    doc.setPage(lastPage);
+                    
+                    const finalY = doc.lastAutoTable.finalY + 15;
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(26, 42, 108);
+                    doc.text('BANK TRANSFER DETAILS', 20, finalY);
+                    
+                    doc.setFontSize(10);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('Bank Name: Maldives Islamic Bank', 20, finalY + 7);
+                    doc.text('Account Name: RIHAAKURU ISLAND', 20, finalY + 14);
+                    doc.text('Account Number: 90101400028101002', 20, finalY + 21);
+                    doc.text(`Reference: BT${order.id} - ${customer.name}`, 20, finalY + 28);
+                    
+                    // Save the PDF
+                    doc.save(`Invoice_BT${order.id}_${customer.name}.pdf`);
                 });
             }
             
@@ -2020,54 +2212,209 @@
                 // Clear current list
                 paymentList.innerHTML = '';
                 
-                // Get trips from Firebase
-                getTrips((trips) => {
-                    // Filter trips based on payment status
-                    let filteredTrips = trips;
-                    if (filter !== 'all') {
-                        filteredTrips = trips.filter(trip => trip.paymentStatus === filter);
-                    }
-                    
-                    if (filteredTrips.length === 0) {
-                        paymentList.innerHTML = '<p>No payments found.</p>';
-                        return;
-                    }
-                    
-                    // Sort trips by date (newest first)
-                    filteredTrips.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    
-                    // Create payment items
-                    filteredTrips.forEach(trip => {
-                        const paymentItem = document.createElement('div');
-                        paymentItem.className = 'payment-item';
+                // Get orders and customers from Firebase
+                getOrders((orders) => {
+                    getCustomers((customers) => {
+                        // Filter orders based on payment status
+                        let filteredOrders = orders;
+                        if (filter !== 'all') {
+                            filteredOrders = orders.filter(order => order.paymentStatus === filter);
+                        }
                         
-                        // Format date
-                        const tripDate = new Date(trip.date).toLocaleDateString();
+                        if (filteredOrders.length === 0) {
+                            paymentList.innerHTML = '<p>No payments found.</p>';
+                            return;
+                        }
                         
-                        paymentItem.innerHTML = `
-                            <div class="payment-info">
-                                <p><strong>${trip.customerName}</strong> - ${trip.island} (${tripDate})</p>
-                                <p>${trip.products.length} products</p>
-                            </div>
-                            <div class="payment-amount">
-                                ${trip.totalAmount ? trip.totalAmount.toFixed(2) + ' RF' : 'Price not set'}
-                            </div>
-                            <div class="payment-actions">
-                                <span class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
-                                    ${trip.paymentStatus.toUpperCase()}
-                                </span>
-                                <button class="btn btn-primary btn-sm view-payment" data-id="${trip.id}">View</button>
-                            </div>
-                        `;
-                        
-                        paymentList.appendChild(paymentItem);
-                        
-                        // Add event listener to view button
-                        paymentItem.querySelector('.view-payment').addEventListener('click', function() {
-                            // Switch to POS tab and show the invoice
-                            document.querySelector('[data-tab="pos"]').click();
-                            showInvoice(trip);
+                        // Create payment items
+                        filteredOrders.forEach(order => {
+                            const customer = customers.find(c => c.id == order.customerId);
+                            
+                            if (!customer) return;
+                            
+                            const paymentItem = document.createElement('div');
+                            paymentItem.className = 'payment-item';
+                            
+                            // Format date
+                            const orderDate = new Date(order.date).toLocaleDateString();
+                            
+                            paymentItem.innerHTML = `
+                                <div class="payment-info">
+                                    <p><strong>${customer.name}</strong> - ${customer.island} (${orderDate})</p>
+                                    <p>Trip: ${order.tripNumber}, Boat: ${order.boatNaalu}</p>
+                                    <p>${order.products.length} products</p>
+                                </div>
+                                <div class="payment-actions">
+                                    <span class="trip-status ${order.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                        ${order.paymentStatus.toUpperCase()}
+                                    </span>
+                                    <button class="btn btn-primary btn-sm view-payment" data-id="${order.id}">View</button>
+                                </div>
+                            `;
+                            
+                            paymentList.appendChild(paymentItem);
+                            
+                            // Add event listener to view button
+                            paymentItem.querySelector('.view-payment').addEventListener('click', function() {
+                                // Switch to POS tab and show the customer orders
+                                document.querySelector('[data-tab="pos"]').click();
+                                showCustomerOrders(order.customerId, customer.name);
+                            });
                         });
+                    });
+                });
+            }
+            
+            // Update dashboard with statistics
+            function updateDashboard() {
+                getOrders((orders) => {
+                    getProducts((products) => {
+                        // Calculate totals
+                        let totalProducts = 0;
+                        let totalNaalu = 0;
+                        let totalOrders = orders.length;
+                        let totalRevenue = 0;
+                        
+                        // Count products and boat naalu
+                        orders.forEach(order => {
+                            totalNaalu += parseInt(order.boatNaalu) || 0;
+                            order.products.forEach(product => {
+                                totalProducts += parseInt(product.qty) || 0;
+                            });
+                        });
+                        
+                        // Update dashboard values
+                        document.getElementById('total-products').textContent = totalProducts;
+                        document.getElementById('total-naalu').textContent = totalNaalu;
+                        document.getElementById('total-orders').textContent = totalOrders;
+                        document.getElementById('total-revenue').textContent = '$' + totalRevenue;
+                        
+                        // Update charts
+                        updateProductsChart(orders);
+                        updateIslandsChart(orders);
+                    });
+                });
+            }
+            
+            function getProducts(callback) {
+                database.ref('products').once('value').then((snapshot) => {
+                    const products = snapshot.val();
+                    callback(products || []);
+                });
+            }
+            
+            function updateProductsChart(orders) {
+                // Count products by type
+                const productCounts = {};
+                
+                orders.forEach(order => {
+                    order.products.forEach(product => {
+                        if (!productCounts[product.productName]) {
+                            productCounts[product.productName] = 0;
+                        }
+                        productCounts[product.productName] += parseInt(product.qty) || 0;
+                    });
+                });
+                
+                const ctx = document.getElementById('products-chart').getContext('2d');
+                
+                // Destroy previous chart if it exists
+                if (productsChart) {
+                    productsChart.destroy();
+                }
+                
+                productsChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(productCounts),
+                        datasets: [{
+                            label: 'Products Delivered',
+                            data: Object.values(productCounts),
+                            backgroundColor: [
+                                'rgba(26, 42, 108, 0.7)',
+                                'rgba(178, 31, 31, 0.7)',
+                                'rgba(253, 187, 45, 0.7)',
+                                'rgba(40, 167, 69, 0.7)',
+                                'rgba(23, 162, 184, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(26, 42, 108, 1)',
+                                'rgba(178, 31, 31, 1)',
+                                'rgba(253, 187, 45, 1)',
+                                'rgba(40, 167, 69, 1)',
+                                'rgba(23, 162, 184, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function updateIslandsChart(orders) {
+                // Count orders by island
+                const islandCounts = {};
+                
+                orders.forEach(order => {
+                    // Get customer island
+                    database.ref('customers/' + order.customerId).once('value').then((snapshot) => {
+                        const customer = snapshot.val();
+                        if (customer && customer.island) {
+                            if (!islandCounts[customer.island]) {
+                                islandCounts[customer.island] = 0;
+                            }
+                            islandCounts[customer.island] += 1;
+                            
+                            // Update chart when all data is processed
+                            if (Object.keys(islandCounts).length > 0) {
+                                const ctx = document.getElementById('islands-chart').getContext('2d');
+                                
+                                // Destroy previous chart if it exists
+                                if (islandsChart) {
+                                    islandsChart.destroy();
+                                }
+                                
+                                islandsChart = new Chart(ctx, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: Object.keys(islandCounts),
+                                        datasets: [{
+                                            label: 'Orders by Island',
+                                            data: Object.values(islandCounts),
+                                            backgroundColor: [
+                                                'rgba(26, 42, 108, 0.7)',
+                                                'rgba(178, 31, 31, 0.7)',
+                                                'rgba(253, 187, 45, 0.7)',
+                                                'rgba(40, 167, 69, 0.7)',
+                                                'rgba(23, 162, 184, 0.7)',
+                                                'rgba(108, 117, 125, 0.7)'
+                                            ],
+                                            borderColor: [
+                                                'rgba(26, 42, 108, 1)',
+                                                'rgba(178, 31, 31, 1)',
+                                                'rgba(253, 187, 45, 1)',
+                                                'rgba(40, 167, 69, 1)',
+                                                'rgba(23, 162, 184, 1)',
+                                                'rgba(108, 117, 125, 1)'
+                                            ],
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true
+                                    }
+                                });
+                            }
+                        }
                     });
                 });
             }
