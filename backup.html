@@ -1,0 +1,2078 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boat Trip Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <!-- Firebase Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Custom font for the header */
+        @font-face {
+            font-family: 'SameeAvasThaana';
+            src: url('fonts/Samee_Avas_Thaana.ttf');
+        }
+        
+        /* Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .splash-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+        
+        .splash-logo i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .splash-logo h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            font-family: 'SameeAvasThaana', sans-serif;
+        }
+        
+        .splash-logo p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            width: 80%;
+            max-width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 30px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: white;
+            border-radius: 3px;
+            transition: width 2s ease-in-out;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Main App Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        header {
+            background: #1a2a6c;
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 6px;
+        }
+        
+        .logo i {
+            font-size: 2.2rem;
+            margin-right: 8px;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-family: 'SameeAvasThaana', sans-serif;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #0d1b4b;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            transition: all 0.3s;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .tab.active {
+            background: #fdbb2d;
+            color: #1a2a6c;
+        }
+        
+        .tab:hover:not(.active) {
+            background: #2a3b7c;
+        }
+        
+        .content {
+            padding: 15px;
+        }
+        
+        .form-section {
+            display: block;
+        }
+        
+        .pos-section, .island-section, .payment-section {
+            display: none;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -5px 10px;
+        }
+        
+        .form-group {
+            flex: 1 0 100%;
+            margin: 0 5px 12px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1a2a6c;
+            font-size: 13px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #1a2a6c;
+            outline: none;
+        }
+        
+        .product-details {
+            background: #f5f7ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .product-header {
+            display: none;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #1a2a6c;
+            padding: 0 5px;
+            font-size: 13px;
+        }
+        
+        .product-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            align-items: center;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .product-name {
+            flex: 1 0 100%;
+            padding: 0 5px;
+            margin-bottom: 8px;
+        }
+        
+        .product-unit {
+            flex: 1;
+            padding: 0 5px;
+            margin-bottom: 8px;
+        }
+        
+        .product-qty {
+            flex: 1;
+            padding: 0 5px;
+            margin-bottom: 8px;
+        }
+        
+        .product-price {
+            flex: 1;
+            padding: 0 5px;
+            margin-bottom: 8px;
+        }
+        
+        .product-desc {
+            flex: 1 0 100%;
+            padding: 0 5px;
+            margin-bottom: 8px;
+        }
+        
+        .product-actions {
+            flex: 1;
+            padding: 0 5px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            padding: 10px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1a2a6c;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2a3b7c;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-sm {
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+        
+        .btn-xs {
+            padding: 4px 6px;
+            font-size: 11px;
+        }
+        
+        .payment-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .payment-status label {
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .payment-status input {
+            width: auto;
+            margin-right: 5px;
+        }
+        
+        .status-radio {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 5px;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        /* Island Management Styles */
+        .island-management {
+            background: #f5f7ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .island-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .island-form input {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .island-list {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .island-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        
+        .island-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* POS System Styles */
+        .island-selector {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .island-selector select {
+            max-width: 100%;
+            margin: 0 auto 10px;
+        }
+        
+        .search-container {
+            margin-bottom: 15px;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .pos-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .trip-list {
+            flex: 1;
+            min-width: 100%;
+            background: #f5f7ff;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .trip-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .trip-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .trip-card.selected {
+            border: 2px solid #1a2a6c;
+            background: #e6e9ff;
+        }
+        
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .trip-island {
+            font-weight: bold;
+            color: #1a2a6c;
+            font-size: 14px;
+        }
+        
+        .trip-date {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .trip-customer {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        .trip-products {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        
+        .trip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed #ddd;
+            flex-wrap: wrap;
+        }
+        
+        .trip-status {
+            padding: 3px 6px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-unpaid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .trip-amount {
+            font-weight: bold;
+            color: #1a2a6c;
+            font-size: 14px;
+        }
+        
+        .trip-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .invoice-preview {
+            flex: 1;
+            min-width: 100%;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .invoice-products {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 12px;
+            min-width: 500px;
+        }
+        
+        .invoice-products th {
+            background: #f5f7ff;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            font-size: 12px;
+        }
+        
+        .invoice-products td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+        }
+        
+        .invoice-total {
+            text-align: right;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f5f7ff;
+            border-radius: 6px;
+        }
+        
+        .invoice-actions {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .bank-details {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        
+        /* Payment Management Styles */
+        .payment-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .payment-filter {
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+        
+        .payment-filter.active {
+            background: #1a2a6c;
+            color: white;
+        }
+        
+        .payment-filter:hover:not(.active) {
+            background: #2a3b7c;
+            color: white;
+        }
+        
+        .payment-list {
+            background: #f5f7ff;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .payment-item {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .payment-info {
+            flex: 2;
+            margin-bottom: 8px;
+        }
+        
+        .payment-amount {
+            flex: 1;
+            text-align: right;
+            font-weight: bold;
+            font-size: 14px;
+            color: #1a2a6c;
+            margin-bottom: 8px;
+        }
+        
+        .payment-actions {
+            flex: 1;
+            text-align: right;
+        }
+        
+        /* Combined Invoice Styles */
+        .combined-invoice {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f7ff;
+            border-radius: 8px;
+        }
+        
+        .customer-selector {
+            margin-bottom: 15px;
+        }
+        
+        .customer-selector select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        
+        .combined-invoice-actions {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        /* Mobile-specific styles */
+        .mobile-product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .mobile-product-row {
+            display: contents;
+        }
+        
+        /* Mobile invoice styles */
+        @media (max-width: 767px) {
+            .invoice-products th:nth-child(4),
+            .invoice-products td:nth-child(4) {
+                display: none;
+            }
+            
+            .invoice-products th:nth-child(4)::before {
+                content: "Boat Naalu";
+                display: table-cell;
+            }
+            
+            .invoice-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .invoice-actions .btn {
+                width: 100%;
+                margin-bottom: 8px;
+            }
+        }
+        
+        /* Print styles for invoice */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .invoice-preview, .invoice-preview * {
+                visibility: visible;
+            }
+            .invoice-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            .invoice-actions {
+                display: none;
+            }
+        }
+        
+        /* Media queries for larger screens */
+        @media (min-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .container {
+                max-width: 95%;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            .logo i {
+                font-size: 3rem;
+            }
+            
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .tab {
+                font-size: 14px;
+                padding: 12px 15px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .form-group {
+                flex: 1 0 calc(50% - 10px);
+            }
+            
+            .product-header {
+                display: flex;
+            }
+            
+            .product-name, .product-unit, .product-qty, .product-price, .product-desc, .product-actions {
+                margin-bottom: 0;
+                flex: 1;
+            }
+            
+            .product-name {
+                flex: 2;
+            }
+            
+            .product-desc {
+                flex: 2;
+            }
+            
+            .trip-list, .invoice-preview {
+                min-width: calc(50% - 8px);
+            }
+            
+            .payment-info, .payment-amount, .payment-actions {
+                margin-bottom: 0;
+            }
+            
+            .mobile-product-grid {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1300px;
+            }
+            
+            .form-group {
+                flex: 1 0 calc(33.333% - 10px);
+            }
+        }
+        
+        /* Total trips value display */
+        .total-trips-value {
+            background: #1a2a6c;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-logo">
+            <i class="fas fa-ship"></i>
+            <h1>qTOb amAyin</h1>
+            <p>Boat Trip Management System</p>
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="splash-progress"></div>
+        </div>
+    </div>
+    
+    <!-- Main App Container -->
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-ship"></i>
+                <h1>qTOb amAyin</h1>
+            </div>
+            <p>Manage your boat trips, customers, and invoices in one place</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="form">Entry Form</div>
+            <div class="tab" data-tab="pos">POS System</div>
+            <div class="tab" data-tab="island">Island Management</div>
+            <div class="tab" data-tab="payment">Payment Management</div>
+        </div>
+        
+        <div class="content">
+            <!-- Entry Form Section -->
+            <div class="form-section" id="form-section">
+                <form id="trip-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="trip-date">Select Date</label>
+                            <input type="date" id="trip-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="island">Select Island</label>
+                            <select id="island" required>
+                                <option value="">Select an island</option>
+                                <!-- Islands will be loaded from Firebase -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-name">Customer/Business Name</label>
+                            <input type="text" id="customer-name" placeholder="Enter customer name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Contact</label>
+                            <input type="text" id="contact" placeholder="Enter contact number" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="receiver-name">Receiver Name (Optional)</label>
+                            <input type="text" id="receiver-name" placeholder="Enter receiver name">
+                        </div>
+                        <div class="form-group">
+                            <label for="receiver-contact">Receiver Contact (Optional)</label>
+                            <input type="text" id="receiver-contact" placeholder="Enter receiver contact">
+                        </div>
+                    </div>
+                    
+                    <h3>Product Details</h3>
+                    <div class="product-details">
+                        <div class="product-header">
+                            <div class="product-name">Product Name</div>
+                            <div class="product-unit">Unit</div>
+                            <div class="product-qty">Quantity</div>
+                            <div class="product-price">Price (RF)</div>
+                            <div class="product-desc">Description</div>
+                            <div class="product-actions">Actions</div>
+                        </div>
+                        
+                        <div class="product-rows" id="product-rows">
+                            <div class="product-row">
+                                <div class="product-name">
+                                    <input type="text" placeholder="Product name" class="product-input" required>
+                                </div>
+                                <div class="product-unit">
+                                    <select class="unit-select">
+                                        <option value="Unit">Unit</option>
+                                        <option value="Kg">Kg</option>
+                                        <option value="Foot">Foot</option>
+                                        <option value="Ltr">Ltr</option>
+                                        <option value="Kodi">Kodi</option>
+                                        <option value="Pcs">Pcs</option>
+                                        <option value="Case">Case</option>
+                                        <option value="Dozen">Dozen</option>
+                                        <option value="Can">Can</option>
+                                    </select>
+                                </div>
+                                <div class="product-qty">
+                                    <input type="number" placeholder="Qty" class="qty-input" min="1" value="1" required>
+                                </div>
+                                <div class="product-price">
+                                    <input type="number" placeholder="Price (RF)" class="price-input" min="0" step="0.01">
+                                </div>
+                                <div class="product-desc">
+                                    <input type="text" placeholder="Description (optional)" class="desc-input">
+                                </div>
+                                <div class="product-actions">
+                                    <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-primary" id="add-product"><i class="fas fa-plus"></i> Add Product</button>
+                    </div>
+                    
+                    <div class="payment-status">
+                        <label>Payment Status:</label>
+                        <div class="status-radio">
+                            <input type="radio" id="paid" name="payment-status" value="paid">
+                            <label for="paid">Paid</label>
+                        </div>
+                        <div class="status-radio">
+                            <input type="radio" id="unpaid" name="payment-status" value="unpaid" checked>
+                            <label for="unpaid">Unpaid</label>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save Trip</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- POS System Section -->
+            <div class="pos-section" id="pos-section">
+                <div class="island-selector">
+                    <label for="pos-island">Select Island to View Trips:</label>
+                    <select id="pos-island">
+                        <option value="all">All Islands</option>
+                        <!-- Islands will be loaded from Firebase -->
+                    </select>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" id="search-trips" placeholder="Search by customer name, contact, or invoice ID...">
+                </div>
+                
+                <div class="total-trips-value" id="total-trips-value">
+                    Total Trips: 0 | Total Value: 0 RF
+                </div>
+                
+                <div class="pos-container">
+                    <div class="trip-list" id="trip-list">
+                        <h3>Recent Trips</h3>
+                        <!-- Trip cards will be generated here -->
+                    </div>
+                    
+                    <div class="invoice-preview" id="invoice-preview">
+                        <div class="invoice-header">
+                            <h2>Invoice Preview</h2>
+                            <p>Select a trip to view details</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Combined Invoice Section -->
+                <div class="combined-invoice">
+                    <h3>Combined Invoice for Customer</h3>
+                    <div class="customer-selector">
+                        <label for="customer-select">Select Customer:</label>
+                        <select id="customer-select">
+                            <option value="">Select a customer</option>
+                            <!-- Customers will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="combined-invoice-actions">
+                        <button class="btn btn-primary" id="generate-combined-invoice">Generate Combined Invoice</button>
+                        <button class="btn btn-success" id="send-combined-pdf">Send Combined PDF via Viber</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Island Management Section -->
+            <div class="island-section" id="island-section">
+                <h2>Island Management</h2>
+                <p>Add and remove islands for your boat trips</p>
+                
+                <div class="island-management">
+                    <div class="island-form">
+                        <input type="text" id="new-island" placeholder="Enter new island name">
+                        <button class="btn btn-primary" id="add-island"><i class="fas fa-plus"></i> Add Island</button>
+                    </div>
+                    
+                    <div class="island-list" id="island-list">
+                        <h3>Available Islands</3>
+                        <!-- Islands will be listed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Management Section -->
+            <div class="payment-section" id="payment-section">
+                <h2>Payment Management</h2>
+                <p>View and manage payments for your boat trips</p>
+                
+                <div class="payment-filters">
+                    <div class="payment-filter active" data-filter="all">All Payments</div>
+                    <div class="payment-filter" data-filter="paid">Paid</div>
+                    <div class="payment-filter" data-filter="unpaid">Unpaid</div>
+                </div>
+                
+                <div class="payment-list" id="payment-list">
+                    <!-- Payment items will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        window.jsPDF = window.jspdf.jsPDF;
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyipnhQ_PhDyTD490RgshfgSpioXq37eA",
+            authDomain: "boatmanagementsystem-5ffba.firebaseapp.com",
+            databaseURL: "https://boatmanagementsystem-5ffba-default-rtdb.firebaseio.com",
+            projectId: "boatmanagementsystem-5ffba",
+            storageBucket: "boatmanagementsystem-5ffba.firebasestorage.app",
+            messagingSenderId: "4668108280",
+            appId: "1:4668108280:web:b8c0504ccf7a4df2c17a0d",
+            measurementId: "G-WZ1LGR0W5Z"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show splash screen first
+            const splashScreen = document.getElementById('splash-screen');
+            const progressBar = document.getElementById('splash-progress');
+            const container = document.querySelector('.container');
+            
+            // Simulate loading progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    // Hide splash screen and show main app
+                    splashScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        splashScreen.style.display = 'none';
+                        container.style.opacity = '1';
+                        container.style.transform = 'translateY(0)';
+                        
+                        // Initialize data after splash screen
+                        initializeData();
+                    }, 500);
+                }
+            }, 100);
+            
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab');
+            const formSection = document.getElementById('form-section');
+            const posSection = document.getElementById('pos-section');
+            const islandSection = document.getElementById('island-section');
+            const paymentSection = document.getElementById('payment-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    formSection.style.display = 'none';
+                    posSection.style.display = 'none';
+                    islandSection.style.display = 'none';
+                    paymentSection.style.display = 'none';
+                    
+                    if (this.dataset.tab === 'form') {
+                        formSection.style.display = 'block';
+                    } else if (this.dataset.tab === 'pos') {
+                        posSection.style.display = 'block';
+                        loadTrips();
+                        loadCustomerSelector();
+                    } else if (this.dataset.tab === 'island') {
+                        islandSection.style.display = 'block';
+                        loadIslands();
+                    } else if (this.dataset.tab === 'payment') {
+                        paymentSection.style.display = 'block';
+                        loadPayments('all');
+                    }
+                });
+            });
+            
+            // Payment filter functionality
+            const paymentFilters = document.querySelectorAll('.payment-filter');
+            paymentFilters.forEach(filter => {
+                filter.addEventListener('click', function() {
+                    paymentFilters.forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    loadPayments(this.dataset.filter);
+                });
+            });
+            
+            // Add product row functionality
+            const addProductBtn = document.getElementById('add-product');
+            const productRows = document.getElementById('product-rows');
+            
+            addProductBtn.addEventListener('click', function() {
+                const newRow = document.createElement('div');
+                newRow.className = 'product-row';
+                newRow.innerHTML = `
+                    <div class="product-name">
+                        <input type="text" placeholder="Product name" class="product-input" required>
+                    </div>
+                    <div class="product-unit">
+                        <select class="unit-select">
+                            <option value="Unit">Unit</option>
+                            <option value="Kg">Kg</option>
+                            <option value="Foot">Foot</option>
+                            <option value="Ltr">Ltr</option>
+                            <option value="Kodi">Kodi</option>
+                            <option value="Pcs">Pcs</option>
+                            <option value="Case">Case</option>
+                            <option value="Dozen">Dozen</option>
+                            <option value="Can">Can</option>
+                        </select>
+                    </div>
+                    <div class="product-qty">
+                        <input type="number" placeholder="Qty" class="qty-input" min="1" value="1" required>
+                    </div>
+                    <div class="product-price">
+                        <input type="number" placeholder="Price (RF)" class="price-input" min="0" step="0.01">
+                    </div>
+                    <div class="product-desc">
+                        <input type="text" placeholder="Description (optional)" class="desc-input">
+                    </div>
+                    <div class="product-actions">
+                        <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                productRows.appendChild(newRow);
+                
+                // Add event listener to the remove button
+                newRow.querySelector('.remove-product').addEventListener('click', function() {
+                    if (document.querySelectorAll('.product-row').length > 1) {
+                        newRow.remove();
+                    } else {
+                        alert('You need at least one product!');
+                    }
+                });
+            });
+            
+            // Add event listeners to initial remove buttons
+            document.querySelectorAll('.remove-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (document.querySelectorAll('.product-row').length > 1) {
+                        this.closest('.product-row').remove();
+                    } else {
+                        alert('You need at least one product!');
+                    }
+                });
+            });
+            
+            // Form submission
+            const tripForm = document.getElementById('trip-form');
+            
+            tripForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const date = document.getElementById('trip-date').value;
+                const island = document.getElementById('island').value;
+                const customerName = document.getElementById('customer-name').value;
+                const contact = document.getElementById('contact').value;
+                const receiverName = document.getElementById('receiver-name').value;
+                const receiverContact = document.getElementById('receiver-contact').value;
+                const paymentStatus = document.querySelector('input[name="payment-status"]:checked').value;
+                
+                // Get products
+                const products = [];
+                document.querySelectorAll('.product-row').forEach(row => {
+                    const productName = row.querySelector('.product-input').value;
+                    const unit = row.querySelector('.unit-select').value;
+                    const qty = row.querySelector('.qty-input').value;
+                    const price = row.querySelector('.price-input').value;
+                    const description = row.querySelector('.desc-input').value;
+                    
+                    if (productName) {
+                        products.push({
+                            productName,
+                            unit,
+                            qty,
+                            price,
+                            description
+                        });
+                    }
+                });
+                
+                // Validate form
+                if (!date || !island || !customerName || !contact || products.length === 0) {
+                    alert('Please fill in all required fields and add at least one product!');
+                    return;
+                }
+                
+                // Create trip object
+                const trip = {
+                    id: Date.now(), // Unique ID
+                    date,
+                    island,
+                    customerName,
+                    contact,
+                    receiverName,
+                    receiverContact,
+                    products,
+                    paymentStatus,
+                    totalAmount: products.reduce((sum, product) => sum + (parseFloat(product.price || 0) * parseInt(product.qty)), 0)
+                };
+                
+                // Save to Firebase
+                saveTrip(trip);
+                
+                // Reset form
+                tripForm.reset();
+                // Reset products to one row
+                document.querySelectorAll('.product-row').forEach((row, index) => {
+                    if (index > 0) row.remove();
+                });
+                
+                // Set today's date
+                document.getElementById('trip-date').valueAsDate = new Date();
+                
+                alert('Trip saved successfully!');
+            });
+            
+            // Add island functionality
+            const addIslandBtn = document.getElementById('add-island');
+            const newIslandInput = document.getElementById('new-island');
+            
+            addIslandBtn.addEventListener('click', function() {
+                const islandName = newIslandInput.value.trim();
+                if (islandName) {
+                    addIsland(islandName);
+                    newIslandInput.value = '';
+                } else {
+                    alert('Please enter an island name!');
+                }
+            });
+            
+            // POS Island filter
+            const posIsland = document.getElementById('pos-island');
+            posIsland.addEventListener('change', loadTrips);
+            
+            // Search functionality
+            const searchInput = document.getElementById('search-trips');
+            searchInput.addEventListener('input', function() {
+                loadTrips(this.value);
+            });
+            
+            // Combined invoice functionality
+            const generateCombinedInvoiceBtn = document.getElementById('generate-combined-invoice');
+            const sendCombinedPdfBtn = document.getElementById('send-combined-pdf');
+            
+            generateCombinedInvoiceBtn.addEventListener('click', function() {
+                const customerSelect = document.getElementById('customer-select');
+                const customerName = customerSelect.value;
+                
+                if (!customerName) {
+                    alert('Please select a customer first!');
+                    return;
+                }
+                
+                generateCombinedInvoice(customerName);
+            });
+            
+            sendCombinedPdfBtn.addEventListener('click', function() {
+                const customerSelect = document.getElementById('customer-select');
+                const customerName = customerSelect.value;
+                
+                if (!customerName) {
+                    alert('Please select a customer first!');
+                    return;
+                }
+                
+                generateCombinedPdf(customerName);
+            });
+            
+            // Initialize with today's date
+            document.getElementById('trip-date').valueAsDate = new Date();
+            
+            // Data functions
+            function initializeData() {
+                // Load islands from Firebase
+                loadIslandsFromFirebase();
+                
+                // Set up real-time listener for trips
+                database.ref('trips').on('value', (snapshot) => {
+                    loadTrips();
+                    loadCustomerSelector();
+                });
+            }
+            
+            function loadIslandsFromFirebase() {
+                database.ref('islands').once('value').then((snapshot) => {
+                    const islands = snapshot.val();
+                    if (!islands) {
+                        // Add default islands if none exist
+                        const defaultIslands = ['K.Male', 'Dhiggaru', 'Mulah', 'Fuvahmulah'];
+                        database.ref('islands').set(defaultIslands).then(() => {
+                            updateIslandSelects(defaultIslands);
+                        });
+                    } else {
+                        updateIslandSelects(islands);
+                    }
+                });
+            }
+            
+            function updateIslandSelects(islands) {
+                const islandSelect = document.getElementById('island');
+                const posIslandSelect = document.getElementById('pos-island');
+                
+                // Clear existing options except the first one
+                while (islandSelect.options.length > 1) {
+                    islandSelect.remove(1);
+                }
+                
+                while (posIslandSelect.options.length > 1) {
+                    posIslandSelect.remove(1);
+                }
+                
+                // Add islands to selects
+                islands.forEach(island => {
+                    const option = document.createElement('option');
+                    option.value = island;
+                    option.textContent = island;
+                    islandSelect.appendChild(option);
+                    
+                    const posOption = document.createElement('option');
+                    posOption.value = island;
+                    posOption.textContent = island;
+                    posIslandSelect.appendChild(posOption);
+                });
+            }
+            
+            function loadIslands() {
+                const islandList = document.getElementById('island-list');
+                
+                database.ref('islands').once('value').then((snapshot) => {
+                    const islands = snapshot.val();
+                    
+                    // Clear current list
+                    islandList.innerHTML = '<h3>Available Islands</h3>';
+                    
+                    if (!islands || islands.length === 0) {
+                        islandList.innerHTML += '<p>No islands added yet.</p>';
+                        return;
+                    }
+                    
+                    // Create island items
+                    islands.forEach(island => {
+                        const islandItem = document.createElement('div');
+                        islandItem.className = 'island-item';
+                        islandItem.innerHTML = `
+                            <div class="island-name">${island}</div>
+                            <button class="btn btn-danger btn-sm delete-island" data-island="${island}"><i class="fas fa-trash"></i> Delete</button>
+                        `;
+                        
+                        islandList.appendChild(islandItem);
+                        
+                        // Add event listener to delete button
+                        islandItem.querySelector('.delete-island').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete ${island}?`)) {
+                                deleteIsland(island);
+                            }
+                        });
+                    });
+                });
+            }
+            
+            function addIsland(islandName) {
+                database.ref('islands').once('value').then((snapshot) => {
+                    const islands = snapshot.val() || [];
+                    if (!islands.includes(islandName)) {
+                        islands.push(islandName);
+                        database.ref('islands').set(islands).then(() => {
+                            updateIslandSelects(islands);
+                            loadIslands();
+                            alert('Island added successfully!');
+                        });
+                    } else {
+                        alert('This island already exists!');
+                    }
+                });
+            }
+            
+            function deleteIsland(islandName) {
+                database.ref('islands').once('value').then((snapshot) => {
+                    const islands = snapshot.val();
+                    const updatedIslands = islands.filter(island => island !== islandName);
+                    database.ref('islands').set(updatedIslands).then(() => {
+                        updateIslandSelects(updatedIslands);
+                        loadIslands();
+                        alert('Island deleted successfully!');
+                    });
+                });
+            }
+            
+            function saveTrip(trip) {
+                database.ref('trips/' + trip.id).set(trip);
+            }
+            
+            function getTrips(callback) {
+                database.ref('trips').once('value').then((snapshot) => {
+                    const trips = snapshot.val();
+                    const tripsArray = trips ? Object.values(trips) : [];
+                    callback(tripsArray);
+                });
+            }
+            
+            function deleteTrip(id) {
+                database.ref('trips/' + id).remove().then(() => {
+                    loadTrips();
+                    document.getElementById('invoice-preview').innerHTML = `
+                        <div class="invoice-header">
+                            <h2>Invoice Preview</h2>
+                            <p>Select a trip to view details</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            function updatePaymentStatus(id, status) {
+                database.ref('trips/' + id + '/paymentStatus').set(status);
+            }
+            
+            function updateTripPrice(id, productIndex, price) {
+                database.ref('trips/' + id + '/products/' + productIndex + '/price').set(price);
+            }
+            
+            // Load customer selector for combined invoices
+            function loadCustomerSelector() {
+                const customerSelect = document.getElementById('customer-select');
+                
+                // Clear existing options except the first one
+                while (customerSelect.options.length > 1) {
+                    customerSelect.remove(1);
+                }
+                
+                // Get trips from Firebase
+                getTrips((trips) => {
+                    // Get unique customer names
+                    const customers = [...new Set(trips.map(trip => trip.customerName))];
+                    
+                    // Add customers to select
+                    customers.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer;
+                        option.textContent = customer;
+                        customerSelect.appendChild(option);
+                    });
+                });
+            }
+            
+            // Load trips for POS system
+            function loadTrips(searchTerm = '') {
+                const tripList = document.getElementById('trip-list');
+                const islandFilter = document.getElementById('pos-island').value;
+                const totalTripsValue = document.getElementById('total-trips-value');
+                
+                // Clear current list
+                tripList.innerHTML = '<h3>Recent Trips</h3>';
+                
+                // Get trips from Firebase
+                getTrips((trips) => {
+                    // Filter by island if needed
+                    let filteredTrips = islandFilter === 'all' 
+                        ? trips 
+                        : trips.filter(trip => trip.island === islandFilter);
+                    
+                    // Filter by search term if provided
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        filteredTrips = filteredTrips.filter(trip => 
+                            trip.customerName.toLowerCase().includes(term) ||
+                            trip.contact.toLowerCase().includes(term) ||
+                            trip.id.toString().includes(term)
+                        );
+                    }
+                    
+                    // Calculate total trips and total value
+                    const totalTrips = filteredTrips.length;
+                    const totalValue = filteredTrips.reduce((sum, trip) => sum + (trip.totalAmount || 0), 0);
+                    
+                    // Update total trips value display
+                    totalTripsValue.textContent = `Total Trips: ${totalTrips} | Total Value: ${totalValue.toFixed(2)} RF`;
+                    
+                    if (filteredTrips.length === 0) {
+                        tripList.innerHTML += '<p>No trips found.</p>';
+                        return;
+                    }
+                    
+                    // Sort trips by date (newest first)
+                    filteredTrips.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    // Create trip cards
+                    filteredTrips.forEach(trip => {
+                        const tripCard = document.createElement('div');
+                        tripCard.className = 'trip-card';
+                        tripCard.dataset.id = trip.id;
+                        
+                        // Format date
+                        const tripDate = new Date(trip.date).toLocaleDateString();
+                        
+                        // Calculate total items
+                        const totalItems = trip.products.reduce((sum, product) => sum + parseInt(product.qty), 0);
+                        
+                        tripCard.innerHTML = `
+                            <div class="trip-header">
+                                <div class="trip-island">${trip.island}</div>
+                                <div class="trip-date">${tripDate}</div>
+                            </div>
+                            <div class="trip-customer">
+                                <strong>Customer:</strong> ${trip.customerName}
+                            </div>
+                            <div class="trip-products">
+                                <strong>Products:</strong> ${totalItems} items
+                            </div>
+                            <div class="trip-footer">
+                                <div class="trip-amount">${trip.totalAmount ? trip.totalAmount.toFixed(2) + ' RF' : 'Price not set'}</div>
+                                <div class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                    ${trip.paymentStatus.toUpperCase()}
+                                </div>
+                                <div class="trip-actions">
+                                    <button class="btn btn-primary btn-sm view-btn">View</button>
+                                    <button class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        tripList.appendChild(tripCard);
+                        
+                        // Add event listeners
+                        tripCard.querySelector('.view-btn').addEventListener('click', function() {
+                            showInvoice(trip);
+                        });
+                        
+                        tripCard.querySelector('.delete-btn').addEventListener('click', function() {
+                            if (confirm('Are you sure you want to delete this trip?')) {
+                                deleteTrip(trip.id);
+                            }
+                        });
+                    });
+                });
+            }
+            
+            // Show invoice function
+            function showInvoice(trip) {
+                const invoicePreview = document.getElementById('invoice-preview');
+                
+                // Format date
+                const tripDate = new Date(trip.date).toLocaleDateString();
+                
+                // Calculate total amount
+                const totalAmount = trip.products.reduce((sum, product) => {
+                    return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                }, 0);
+                
+                // Check if mobile device
+                const isMobile = window.innerWidth <= 767;
+                
+                invoicePreview.innerHTML = `
+                    <div class="invoice-header">
+                        <h2>INVOICE</h2>
+                        <p>NIYAAMAA BOAT</p>
+                    </div>
+                    
+                    <div class="invoice-details">
+                        <div>
+                            <p><strong>Invoice ID:</strong> BT${trip.id}</p>
+                            <p><strong>Date:</strong> ${tripDate}</p>
+                            <p><strong>Island:</strong> ${trip.island}</p>
+                        </div>
+                        <div>
+                            <p><strong>Customer:</strong> ${trip.customerName}</p>
+                            <p><strong>Contact:</strong> ${trip.contact}</p>
+                            <p><strong>Status:</strong> <span class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">${trip.paymentStatus.toUpperCase()}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="invoice-products">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Unit</th>
+                                    <th>Qty</th>
+                                    <th>${isMobile ? 'Boat Naalu' : 'Unit Price'} (RF)</th>
+                                    <th>Total (RF)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${trip.products.map((product, index) => `
+                                    <tr>
+                                        <td>${product.productName}</td>
+                                        <td>${product.unit}</td>
+                                        <td>${product.qty}</td>
+                                        <td>
+                                            <input type="number" value="${product.price || 0}" step="0.01" 
+                                                class="price-edit" data-id="${trip.id}" data-index="${index}" 
+                                                style="width: 70px; padding: 4px; font-size: 12px;">
+                                        </td>
+                                        <td>${(parseFloat(product.price || 0) * parseInt(product.qty)).toFixed(2)}</td>
+                                        <td>
+                                            <button class="btn btn-xs btn-primary update-price" 
+                                                data-id="${trip.id}" data-index="${index}">Update</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="invoice-total">
+                        Total Amount: ${totalAmount.toFixed(2)} RF
+                    </div>
+                    
+                    <div class="bank-details">
+                        <h3>Bank Transfer Details</h3>
+                        <p><strong>Bank Name:</strong> Maldives Islamic Bank</p>
+                        <p><strong>Account Name:</strong> RIHAAKURU ISLAND</p>
+                        <p><strong>Account Number:</strong> 90101400028101002</p>
+                        <p><strong>Reference:</strong> BT${trip.id} - ${trip.customerName}</p>
+                    </div>
+                    
+                    <div class="invoice-actions">
+                        <button class="btn btn-success" id="print-invoice">Print Invoice</button>
+                        <button class="btn btn-primary" id="send-invoice">Send via WhatsApp</button>
+                        <button class="btn btn-info" id="send-viber">Send via Viber</button>
+                        ${trip.paymentStatus === 'unpaid' ? 
+                            `<button class="btn btn-primary" id="mark-paid">Mark as Paid</button>` : 
+                            `<button class="btn btn-warning" id="mark-unpaid">Mark as Unpaid</button>`
+                        }
+                    </div>
+                `;
+                
+                // Add event listeners for price updates
+                invoicePreview.querySelectorAll('.update-price').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const tripId = this.dataset.id;
+                        const productIndex = this.dataset.index;
+                        const priceInput = invoicePreview.querySelector(`.price-edit[data-id="${tripId}"][data-index="${productIndex}"]`);
+                        const newPrice = parseFloat(priceInput.value);
+                        
+                        if (!isNaN(newPrice) && newPrice >= 0) {
+                            updateTripPrice(tripId, productIndex, newPrice);
+                            alert('Price updated successfully!');
+                            // Reload the invoice to reflect changes
+                            getTrips((trips) => {
+                                const updatedTrip = trips.find(t => t.id == tripId);
+                                if (updatedTrip) showInvoice(updatedTrip);
+                            });
+                        } else {
+                            alert('Please enter a valid price!');
+                        }
+                    });
+                });
+                
+                // Add event listeners for invoice actions
+                document.getElementById('print-invoice').addEventListener('click', function() {
+                    window.print();
+                });
+                
+                document.getElementById('send-invoice').addEventListener('click', function() {
+                    const message = `Invoice BT${trip.id} for ${trip.customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
+                    const whatsappUrl = `https://wa.me/${trip.contact.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                });
+                
+                // Viber sharing functionality with PDF
+                document.getElementById('send-viber').addEventListener('click', function() {
+                    generatePdfInvoice(trip, true);
+                });
+                
+                if (trip.paymentStatus === 'unpaid') {
+                    document.getElementById('mark-paid').addEventListener('click', function() {
+                        updatePaymentStatus(trip.id, 'paid');
+                        alert('Trip marked as paid!');
+                        getTrips((trips) => {
+                            const updatedTrip = trips.find(t => t.id == trip.id);
+                            if (updatedTrip) showInvoice(updatedTrip);
+                        });
+                    });
+                } else {
+                    document.getElementById('mark-unpaid').addEventListener('click', function() {
+                        updatePaymentStatus(trip.id, 'unpaid');
+                        alert('Trip marked as unpaid!');
+                        getTrips((trips) => {
+                            const updatedTrip = trips.find(t => t.id == trip.id);
+                            if (updatedTrip) showInvoice(updatedTrip);
+                        });
+                    });
+                }
+            }
+            
+            // Generate PDF invoice
+            function generatePdfInvoice(trip, shareViaViber = false) {
+                const doc = new jsPDF();
+                
+                // Add logo and header
+                doc.setFontSize(20);
+                doc.setTextColor(26, 42, 108);
+                doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
+                doc.setFontSize(16);
+                doc.text('INVOICE', 105, 30, { align: 'center' });
+                
+                // Add invoice details
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Invoice ID: BT${trip.id}`, 20, 45);
+                doc.text(`Date: ${new Date(trip.date).toLocaleDateString()}`, 20, 52);
+                doc.text(`Island: ${trip.island}`, 20, 59);
+                
+                doc.text(`Customer: ${trip.customerName}`, 105, 45);
+                doc.text(`Contact: ${trip.contact}`, 105, 52);
+                doc.text(`Status: ${trip.paymentStatus.toUpperCase()}`, 105, 59);
+                
+                // Add products table
+                const tableColumn = ["Product", "Unit", "Qty", "Price (RF)", "Total (RF)"];
+                const tableRows = [];
+                
+                trip.products.forEach(product => {
+                    const productData = [
+                        product.productName,
+                        product.unit,
+                        product.qty,
+                        parseFloat(product.price || 0).toFixed(2),
+                        (parseFloat(product.price || 0) * parseInt(product.qty)).toFixed(2)
+                    ];
+                    tableRows.push(productData);
+                });
+                
+                // Calculate total amount
+                const totalAmount = trip.products.reduce((sum, product) => {
+                    return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                }, 0);
+                
+                // Add total row
+                tableRows.push(["", "", "", "TOTAL:", totalAmount.toFixed(2)]);
+                
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 70,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [26, 42, 108],
+                        textColor: [255, 255, 255]
+                    },
+                    footStyles: {
+                        fillColor: [253, 187, 45],
+                        textColor: [0, 0, 0]
+                    }
+                });
+                
+                // Add bank details
+                const lastPage = doc.internal.getNumberOfPages();
+                doc.setPage(lastPage);
+                
+                const finalY = doc.lastAutoTable.finalY + 15;
+                
+                doc.setFontSize(12);
+                doc.setTextColor(26, 42, 108);
+                doc.text('BANK TRANSFER DETAILS', 20, finalY);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Bank Name: Maldives Islamic Bank', 20, finalY + 7);
+                doc.text('Account Name: RIHAAKURU ISLAND', 20, finalY + 14);
+                doc.text('Account Number: 90101400028101002', 20, finalY + 21);
+                doc.text(`Reference: BT${trip.id} - ${trip.customerName}`, 20, finalY + 28);
+                
+                // Save or share the PDF
+                if (shareViaViber) {
+                    // Convert PDF to data URL for sharing
+                    const pdfDataUrl = doc.output('datauristring');
+                    const message = `Invoice BT${trip.id} for ${trip.customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
+                    const viberUrl = `viber://forward?text=${encodeURIComponent(message + ' ' + pdfDataUrl)}`;
+                    window.location.href = viberUrl;
+                } else {
+                    doc.save(`Invoice_BT${trip.id}_${trip.customerName}.pdf`);
+                }
+            }
+            
+            // Generate combined invoice for a customer
+            function generateCombinedInvoice(customerName) {
+                getTrips((trips) => {
+                    const customerTrips = trips.filter(trip => trip.customerName === customerName);
+                    
+                    if (customerTrips.length === 0) {
+                        alert('No trips found for this customer!');
+                        return;
+                    }
+                    
+                    const invoicePreview = document.getElementById('invoice-preview');
+                    
+                    // Calculate total amount across all trips
+                    const totalAmount = customerTrips.reduce((sum, trip) => {
+                        return sum + trip.products.reduce((tripSum, product) => {
+                            return tripSum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                        }, 0);
+                    }, 0);
+                    
+                    invoicePreview.innerHTML = `
+                        <div class="invoice-header">
+                            <h2>COMBINED INVOICE</h2>
+                            <p>NIYAAMAA BOAT</p>
+                        </div>
+                        
+                        <div class="invoice-details">
+                            <div>
+                                <p><strong>Customer:</strong> ${customerName}</p>
+                                <p><strong>Total Trips:</strong> ${customerTrips.length}</p>
+                            </div>
+                            <div>
+                                <p><strong>Generated Date:</strong> ${new Date().toLocaleDateString()}</p>
+                                <p><strong>Total Amount:</strong> ${totalAmount.toFixed(2)} RF</p>
+                            </div>
+                        </div>
+                        
+                        <div style="overflow-x: auto;">
+                            <table class="invoice-products">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Island</th>
+                                        <th>Products</th>
+                                        <th>Total (RF)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${customerTrips.map(trip => {
+                                        const tripDate = new Date(trip.date).toLocaleDateString();
+                                        const tripAmount = trip.products.reduce((sum, product) => {
+                                            return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                                        }, 0);
+                                        
+                                        return `
+                                            <tr>
+                                                <td>${tripDate}</td>
+                                                <td>${trip.island}</td>
+                                                <td>${trip.products.length} items</td>
+                                                <td>${tripAmount.toFixed(2)}</td>
+                                                <td class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                                    ${trip.paymentStatus.toUpperCase()}
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="invoice-total">
+                            Combined Total Amount: ${totalAmount.toFixed(2)} RF
+                        </div>
+                        
+                        <div class="invoice-actions">
+                            <button class="btn btn-success" id="print-combined-invoice">Print Combined Invoice</button>
+                            <button class="btn btn-info" id="send-combined-viber">Send Combined PDF via Viber</button>
+                        </div>
+                    `;
+                    
+                    // Add event listeners
+                    document.getElementById('print-combined-invoice').addEventListener('click', function() {
+                        window.print();
+                    });
+                    
+                    document.getElementById('send-combined-viber').addEventListener('click', function() {
+                        generateCombinedPdf(customerName);
+                    });
+                });
+            }
+            
+            // Generate combined PDF for a customer
+            function generateCombinedPdf(customerName) {
+                getTrips((trips) => {
+                    const customerTrips = trips.filter(trip => trip.customerName === customerName);
+                    
+                    if (customerTrips.length === 0) {
+                        alert('No trips found for this customer!');
+                        return;
+                    }
+                    
+                    const doc = new jsPDF();
+                    
+                    // Add logo and header
+                    doc.setFontSize(20);
+                    doc.setTextColor(26, 42, 108);
+                    doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
+                    doc.setFontSize(16);
+                    doc.text('COMBINED INVOICE', 105, 30, { align: 'center' });
+                    
+                    // Add customer details
+                    doc.setFontSize(12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(`Customer: ${customerName}`, 20, 45);
+                    doc.text(`Total Trips: ${customerTrips.length}`, 20, 52);
+                    doc.text(`Generated Date: ${new Date().toLocaleDateString()}`, 20, 59);
+                    
+                    // Add trips table
+                    const tableColumn = ["Date", "Island", "Products", "Total (RF)", "Status"];
+                    const tableRows = [];
+                    
+                    customerTrips.forEach(trip => {
+                        const tripDate = new Date(trip.date).toLocaleDateString();
+                        const tripAmount = trip.products.reduce((sum, product) => {
+                            return sum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                        }, 0);
+                        
+                        const tripData = [
+                            tripDate,
+                            trip.island,
+                            `${trip.products.length} items`,
+                            tripAmount.toFixed(2),
+                            trip.paymentStatus.toUpperCase()
+                        ];
+                        tableRows.push(tripData);
+                    });
+                    
+                    // Calculate total amount
+                    const totalAmount = customerTrips.reduce((sum, trip) => {
+                        return sum + trip.products.reduce((tripSum, product) => {
+                            return tripSum + (parseFloat(product.price || 0) * parseInt(product.qty));
+                        }, 0);
+                    }, 0);
+                    
+                    // Add total row
+                    tableRows.push(["", "", "", "COMBINED TOTAL:", totalAmount.toFixed(2)]);
+                    
+                    doc.autoTable({
+                        head: [tableColumn],
+                        body: tableRows,
+                        startY: 70,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: [26, 42, 108],
+                            textColor: [255, 255, 255]
+                        },
+                        footStyles: {
+                            fillColor: [253, 187, 45],
+                            textColor: [0, 0, 0]
+                        }
+                    });
+                    
+                    // Convert PDF to data URL for sharing
+                    const pdfDataUrl = doc.output('datauristring');
+                    const message = `Combined invoice for ${customerName}. Total amount: ${totalAmount.toFixed(2)} RF.`;
+                    const viberUrl = `viber://forward?text=${encodeURIComponent(message + ' ' + pdfDataUrl)}`;
+                    window.location.href = viberUrl;
+                });
+            }
+            
+            // Load payments for payment management
+            function loadPayments(filter) {
+                const paymentList = document.getElementById('payment-list');
+                
+                // Clear current list
+                paymentList.innerHTML = '';
+                
+                // Get trips from Firebase
+                getTrips((trips) => {
+                    // Filter trips based on payment status
+                    let filteredTrips = trips;
+                    if (filter !== 'all') {
+                        filteredTrips = trips.filter(trip => trip.paymentStatus === filter);
+                    }
+                    
+                    if (filteredTrips.length === 0) {
+                        paymentList.innerHTML = '<p>No payments found.</p>';
+                        return;
+                    }
+                    
+                    // Sort trips by date (newest first)
+                    filteredTrips.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    // Create payment items
+                    filteredTrips.forEach(trip => {
+                        const paymentItem = document.createElement('div');
+                        paymentItem.className = 'payment-item';
+                        
+                        // Format date
+                        const tripDate = new Date(trip.date).toLocaleDateString();
+                        
+                        paymentItem.innerHTML = `
+                            <div class="payment-info">
+                                <p><strong>${trip.customerName}</strong> - ${trip.island} (${tripDate})</p>
+                                <p>${trip.products.length} products</p>
+                            </div>
+                            <div class="payment-amount">
+                                ${trip.totalAmount ? trip.totalAmount.toFixed(2) + ' RF' : 'Price not set'}
+                            </div>
+                            <div class="payment-actions">
+                                <span class="trip-status ${trip.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                    ${trip.paymentStatus.toUpperCase()}
+                                </span>
+                                <button class="btn btn-primary btn-sm view-payment" data-id="${trip.id}">View</button>
+                            </div>
+                        `;
+                        
+                        paymentList.appendChild(paymentItem);
+                        
+                        // Add event listener to view button
+                        paymentItem.querySelector('.view-payment').addEventListener('click', function() {
+                            // Switch to POS tab and show the invoice
+                            document.querySelector('[data-tab="pos"]').click();
+                            showInvoice(trip);
+                        });
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
