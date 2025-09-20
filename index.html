@@ -14,8 +14,22 @@
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thaana:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+           /* Custom font for Dhivehi */
+        @font-face {
+            font-family: 'Faruma';
+            src: url('https://cdn.rawgit.com/Moonster/Faruma/master/fonts/Faruma.woff2') format('woff2'),
+                 url('https://cdn.rawgit.com/Moonster/Faruma/master/fonts/Faruma.woff') format('woff'),
+                 url('https://cdn.rawgit.com/Moonster/Faruma/master/fonts/Faruma.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+
+
+
         /* Custom font for the header */
         @font-face {
             font-family: 'SameeAvasThaana';
@@ -188,11 +202,11 @@
             padding: 15px;
         }
         
-        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .boatfee-section {
+        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .trip-section {
             display: none;
         }
         
-        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .boatfee-section.active {
+        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .trip-section.active {
             display: block;
         }
         
@@ -380,26 +394,26 @@
         }
         
         /* Island Management Styles */
-        .island-management, .product-management, .boatfee-management {
+        .island-management, .product-management {
             background: #f5f7ff;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
         }
         
-        .island-form, .product-form, .boatfee-form {
+        .island-form, .product-form {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
         
-        .island-form input, .product-form input, .boatfee-form input {
+        .island-form input, .product-form input {
             flex: 1;
             min-width: 120px;
         }
         
-        .island-list, .product-list, .boatfee-list {
+        .island-list, .product-list {
             background: white;
             border-radius: 8px;
             padding: 10px;
@@ -407,7 +421,7 @@
             overflow-y: auto;
         }
         
-        .island-item, .product-item, .boatfee-item {
+        .island-item, .product-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -416,7 +430,7 @@
             font-size: 13px;
         }
         
-        .island-item:last-child, .product-item:last-child, .boatfee-item:last-child {
+        .island-item:last-child, .product-item:last-child {
             border-bottom: none;
         }
         
@@ -566,6 +580,7 @@
         .invoice-header {
             text-align: center;
             margin-bottom: 15px;
+            font-family: 'SameeAvasThaana', sans-serif;
         }
         
         .invoice-details {
@@ -699,6 +714,7 @@
         /* Customer List Styles */
         .customer-list {
             margin-top: 20px;
+            overflow-x: auto;
         }
         
         .customer-table {
@@ -789,7 +805,8 @@
         
         .dashboard-card h3 {
             color: #1a2a6c;
-            margin-bottom: 10px;
+            margin-bottom: 17px;
+            font-family: 'Faruma';
         }
         
         .dashboard-card .value {
@@ -802,6 +819,7 @@
             font-size: 14px;
             color: #666;
             margin-top: 5px;
+             font-family: 'Faruma';
         }
         
         .dashboard-charts {
@@ -924,6 +942,96 @@
             font-weight: bold;
         }
         
+        /* Quick customer registration button */
+        .quick-customer-btn {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        /* Trip Management Styles */
+        .trip-management {
+            background: #f5f7ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .trip-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .trip-form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .trip-list-container {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .trip-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .trip-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trip-info {
+            flex: 2;
+            font-size: 14px;
+        }
+        
+        .trip-actions {
+            flex: 1;
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+        
+        /* Product Management Enhancement Styles */
+        .product-form-with-fee {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .product-form-with-fee input {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .product-fee-input {
+            max-width: 120px;
+        }
+        
+        .product-item-with-fee {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        
+        .product-fee-display {
+            font-weight: bold;
+            color: #1a2a6c;
+            margin-left: 10px;
+        }
+        
         /* Mobile invoice styles */
         @media (max-width: 767px) {
             .invoice-products th:nth-child(4),
@@ -964,6 +1072,22 @@
             
             .tabs {
                 display: none;
+            }
+            
+            .trip-form-group {
+                min-width: 100%;
+            }
+            
+            .trip-info {
+                font-size: 12px;
+            }
+            
+            .product-form-with-fee input {
+                min-width: 100%;
+            }
+            
+            .product-fee-input {
+                max-width: 100%;
             }
         }
         
@@ -1086,17 +1210,6 @@
             border: 1px solid #ddd;
         }
         
-        /* Trip Number Styles */
-        .trip-number-input {
-            display: flex;
-            align-items: center;
-        }
-        
-        .trip-number-input input {
-            flex: 1;
-            margin-right: 10px;
-        }
-        
         /* Boat Fee Styles */
         .boat-fee-input {
             display: flex;
@@ -1112,6 +1225,57 @@
         .action-buttons {
             display: flex;
             gap: 5px;
+        }
+        
+        /* Boat fee display in product form */
+        .boat-fee-display {
+            background: #e6e9ff;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-weight: bold;
+            color: #1a2a6c;
+        }
+        
+        /* Current Trip Info */
+        .current-trip-info {
+            background: #e6e9ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #1a2a6c;
+        }
+        
+        /* Unpaid row styling */
+        .unpaid-row {
+            background-color: #ffe6e6 !important;
+        }
+        
+        .paid-row {
+            background-color: #e6ffe6 !important;
+        }
+        
+        /* Payment method styling */
+        .payment-method-cell {
+            font-weight: bold;
+        }
+        
+        .payment-method-not-paid {
+            color: #dc3545;
+        }
+        
+        .payment-method-cash {
+            color: #28a745;
+        }
+        
+        .payment-method-transfer {
+            color: #17a2b8;
+        }
+        
+        .payment-method-card {
+            color: #ffc107;
         }
     </style>
 </head>
@@ -1132,11 +1296,11 @@
     <div class="overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
         <div class="tab active" data-tab="dashboard">Dashboard</div>
+        <div class="tab" data-tab="trip">Trip Management</div>
         <div class="tab" data-tab="form">Entry Form</div>
         <div class="tab" data-tab="pos">POS System</div>
         <div class="tab" data-tab="island">Island Management</div>
         <div class="tab" data-tab="product">Product Management</div>
-        <div class="tab" data-tab="boatfee">Boat Fee Management</div>
         <div class="tab" data-tab="payment">Payment Management</div>
     </div>
     
@@ -1155,11 +1319,11 @@
         
         <div class="tabs">
             <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="trip">Trip Management</div>
             <div class="tab" data-tab="form">Entry Form</div>
             <div class="tab" data-tab="pos">POS System</div>
             <div class="tab" data-tab="island">Island Management</div>
             <div class="tab" data-tab="product">Product Management</div>
-            <div class="tab" data-tab="boatfee">Boat Fee Management</div>
             <div class="tab" data-tab="payment">Payment Management</div>
         </div>
         
@@ -1168,6 +1332,11 @@
             <div class="dashboard-section active" id="dashboard-section">
                 <h2>Dashboard</h2>
                 <p>Overview of your boat trip business</p>
+                
+                <!-- Current Trip Info -->
+                <div class="current-trip-info" id="current-trip-info">
+                    Current Trip: None Selected
+                </div>
                 
                 <!-- Date Filter -->
                 <div class="date-filter">
@@ -1178,6 +1347,13 @@
                     <div class="date-filter-group">
                         <label for="end-date">End Date</label>
                         <input type="date" id="end-date">
+                    </div>
+                    <div class="date-filter-group">
+                        <label for="trip-filter">Filter by Trip</label>
+                        <select id="trip-filter">
+                            <option value="all">All Trips</option>
+                            <!-- Trips will be loaded dynamically -->
+                        </select>
                     </div>
                     <div class="date-filter-group">
                         <label>&nbsp;</label>
@@ -1191,33 +1367,27 @@
                 
                 <div class="dashboard-cards">
                     <div class="dashboard-card">
-                        <h3>Total Products</h3>
+                        <h3>ޖުމްލަ މުދާތައް</h3>
                         <div class="value" id="total-products">0</div>
-                        <div class="subtext">All products delivered</div>
+                        <div class="subtext">ހުރިހާ މުދާ ފޯރުކޮށްދެވިފައި</div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <h3>Total Boat Fees</h3>
-                        <div class="value" id="total-boatfees">0</div>
-                        <div class="subtext">Total boat trips</div>
-                    </div>
-                    
-                    <div class="dashboard-card">
-                        <h3>Total Orders</h3>
+                        <h3>ޖުމްލަ ކަސްޓަމަރުން</h3>
                         <div class="value" id="total-orders">0</div>
-                        <div class="subtext">All customer orders</div>
+                        <div class="subtext">ހުރިހާ ކަސްޓަމަރުންގެ މުދާ</div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <h3>Total Revenue</h3>
+                        <h3>ޖުމްލަ އާމްދަނީ</h3>
                         <div class="value" id="total-revenue">RF 0</div>
-                        <div class="subtext">From all trips</div>
+                        <div class="subtext">ހުރިހާ ދަތުރުތަކުން</div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <h3>Pending Bills</h3>
+                        <h3>ނުދައްކާހުރި ބިލުތައް</h3>
                         <div class="value" id="pending-bills">RF 0</div>
-                        <div class="subtext">Unpaid orders</div>
+                        <div class="subtext">ފައިސާ ނުދައްކާ ހުރި ބިލުތައް</div>
                     </div>
                 </div>
                 
@@ -1239,14 +1409,59 @@
                 </div>
             </div>
             
+            <!-- Trip Management Section -->
+            <div class="trip-section" id="trip-section">
+                <h2>Trip Management</h2>
+                <p>Create and manage boat trips</p>
+                
+                <div class="trip-management">
+                    <div class="trip-form">
+                        <div class="trip-form-group">
+                            <label for="trip-date">Trip Date</label>
+                            <input type="date" id="trip-date" required>
+                        </div>
+                        <div class="trip-form-group">
+                            <label for="trip-number">Trip Number</label>
+                            <input type="text" id="trip-number" placeholder="Enter trip number" required>
+                        </div>
+                        <div class="trip-form-group">
+                            <label for="trip-invoice-id">Trip Invoice ID</label>
+                            <input type="text" id="trip-invoice-id" placeholder="Enter invoice ID">
+                        </div>
+                        <div class="trip-form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-success" id="create-trip-btn">Create New Trip</button>
+                        </div>
+                    </div>
+                    
+                    <div class="trip-list-container">
+                        <h3>Available Trips</h3>
+                        <div id="trip-list">
+                            <!-- Trips will be listed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Entry Form Section -->
             <div class="form-section" id="form-section">
+                <div class="current-trip-info" id="entry-trip-info">
+                    Current Trip: None Selected
+                </div>
+                
                 <div class="island-selector">
                     <label for="island">Select Island</label>
                     <select id="island" required>
                         <option value="">Select an island</option>
                         <!-- Islands will be loaded from Firebase -->
                     </select>
+                </div>
+                
+                <!-- Quick Customer Registration Button -->
+                <div class="quick-customer-btn">
+                    <button class="btn btn-success" id="quick-register-btn">
+                        <i class="fas fa-user-plus"></i> Quick Customer Registration
+                    </button>
                 </div>
                 
                 <!-- Island Customers List -->
@@ -1295,21 +1510,11 @@
                     <form id="product-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="trip-number">Trip Number</label>
-                                <div class="trip-number-input">
-                                    <input type="text" id="trip-number" placeholder="Enter trip number" required>
-                                    <button type="button" class="btn btn-primary" id="generate-trip-number">Generate</button>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="product-date">Select Date</label>
+                                <label for="product-date">Date</label>
                                 <input type="date" id="product-date" required>
                             </div>
-                        </div>
-                        
-                        <div class="form-row">
                             <div class="form-group">
-                                <label for="product-time">Select Time</label>
+                                <label for="product-time">Time</label>
                                 <input type="time" id="product-time" required>
                             </div>
                         </div>
@@ -1342,18 +1547,8 @@
                                 <input type="number" id="product-qty-input" placeholder="Quantity" min="1" value="1" required>
                             </div>
                             <div class="form-group">
-                                <label for="product-boat-fee">Boat Fee for this product</label>
-                                <select id="product-boat-fee" required>
-                                    <option value="">Select Boat Fee</option>
-                                    <!-- Boat Fees will be loaded from Firebase -->
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="product-desc-input">Description (Optional)</label>
-                                <textarea id="product-desc-input" placeholder="Product description"></textarea>
+                                <label for="boat-fee-input">Boat Fee (RF)</label>
+                                <input type="number" id="boat-fee-input" placeholder="Boat Fee Amount" step="0.01" min="0" required>
                             </div>
                         </div>
                         
@@ -1369,9 +1564,16 @@
                             </div>
                         </div>
                         
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-desc-input">Description (Optional)</label>
+                                <textarea id="product-desc-input" placeholder="Product description"></textarea>
+                            </div>
+                        </div>
+                        
                         <div class="actions">
                             <button type="submit" class="btn btn-success">Add Product</button>
-                            <button type="button" class="btn btn-primary" id="finish-order-btn">Finish Order</button>
+                            <button type="button" class="btn btn-primary" id="save-invoice-btn">Save Invoice</button>
                         </div>
                     </form>
                     
@@ -1380,14 +1582,14 @@
                         <table class="customer-table">
                             <thead>
                                 <tr>
+                                    <th>Date & Time</th>
                                     <th>Product</th>
-                                    <th>Quantity</th>
+                                    <th>Qty</th>
                                     <th>Unit</th>
                                     <th>Boat Fee</th>
-                                    <th>Trip No</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
+                                    <th>Subtotal</th>
                                     <th>Description</th>
+                                    <th>Payment Method</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -1471,34 +1673,15 @@
                 <p>Add and remove products for your boat trips</p>
                 
                 <div class="product-management">
-                    <div class="product-form">
-                        <input type="text" id="new-product" placeholder="Enter new product name">
-                        <input type="text" id="new-product-boatfee" placeholder="Default Boat Fee">
+                    <div class="product-form-with-fee">
+                        <input type="text" id="new-product" placeholder="Enter product name">
+                        <input type="number" id="new-product-fee" class="product-fee-input" placeholder="Boat Fee (RF)" step="0.01" min="0">
                         <button class="btn btn-primary" id="add-product"><i class="fas fa-plus"></i> Add Product</button>
                     </div>
                     
                     <div class="product-list" id="product-list">
                         <h3>Available Products</h3>
                         <!-- Products will be listed here -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Boat Fee Management Section -->
-            <div class="boatfee-section" id="boatfee-section">
-                <h2>Boat Fee Management</h2>
-                <p>Add and remove boat fees for your products</p>
-                
-                <div class="boatfee-management">
-                    <div class="boatfee-form">
-                        <input type="text" id="new-boatfee" placeholder="Enter new boat fee">
-                        <input type="number" id="new-boatfee-amount" placeholder="Fee Amount (RF)" step="0.01" min="0">
-                        <button class="btn btn-primary" id="add-boatfee"><i class="fas fa-plus"></i> Add Boat Fee</button>
-                    </div>
-                    
-                    <div class="boatfee-list" id="boatfee-list">
-                        <h3>Available Boat Fees</h3>
-                        <!-- Boat Fees will be listed here -->
                     </div>
                 </div>
             </div>
@@ -1552,15 +1735,25 @@
         let currentCustomerId = null;
         let currentIsland = null;
         let customerProducts = [];
-        let tripNumber = "";
         let productsChart = null;
         let islandsChart = null;
         let paymentMethodsChart = null;
         let currentOrderId = null;
-        let tripCounter = 1;
-        let productBoatFees = {};
-        let boatFeeAmounts = {};
+        let currentTrip = null;
 
+        // Bank details for invoices
+        const bankDetails = {
+            name: "Niyaamaa Boat Service",
+            accountNumberBML: "777 0000 206031",
+            accountNumberMIB: "90101400028101002",
+            bankNameBML: "Bank of Maldives (BML)",
+            bankNameMIB: "Maldives Islamic Bank (MIB)",
+            branch: "Male' Branch"
+        };
+
+       // Base64 encoded Island Rihaakuru seal image
+        const islandSealBase64 = "Island Rihaakuru.png";
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Show splash screen first
             const splashScreen = document.getElementById('splash-screen');
@@ -1606,11 +1799,11 @@
             // Tab switching functionality
             const tabs = document.querySelectorAll('.tab');
             const dashboardSection = document.getElementById('dashboard-section');
+            const tripSection = document.getElementById('trip-section');
             const formSection = document.getElementById('form-section');
             const posSection = document.getElementById('pos-section');
             const islandSection = document.getElementById('island-section');
             const productSection = document.getElementById('product-section');
-            const boatfeeSection = document.getElementById('boatfee-section');
             const paymentSection = document.getElementById('payment-section');
             
             tabs.forEach(tab => {
@@ -1619,16 +1812,19 @@
                     this.classList.add('active');
                     
                     dashboardSection.classList.remove('active');
+                    tripSection.classList.remove('active');
                     formSection.classList.remove('active');
                     posSection.classList.remove('active');
                     islandSection.classList.remove('active');
                     productSection.classList.remove('active');
-                    boatfeeSection.classList.remove('active');
                     paymentSection.classList.remove('active');
                     
                     if (this.dataset.tab === 'dashboard') {
                         dashboardSection.classList.add('active');
                         updateDashboard();
+                    } else if (this.dataset.tab === 'trip') {
+                        tripSection.classList.add('active');
+                        loadTrips();
                     } else if (this.dataset.tab === 'form') {
                         formSection.classList.add('active');
                         loadCustomersForSelection();
@@ -1641,9 +1837,6 @@
                     } else if (this.dataset.tab === 'product') {
                         productSection.classList.add('active');
                         loadProducts();
-                    } else if (this.dataset.tab === 'boatfee') {
-                        boatfeeSection.classList.add('active');
-                        loadBoatFees();
                     } else if (this.dataset.tab === 'payment') {
                         paymentSection.classList.add('active');
                         loadPayments('all');
@@ -1653,6 +1846,36 @@
                     sidebar.classList.remove('open');
                     overlay.classList.remove('open');
                 });
+            });
+            
+            // Trip creation
+            document.getElementById('create-trip-btn').addEventListener('click', function() {
+                const tripDate = document.getElementById('trip-date').value;
+                const tripNumber = document.getElementById('trip-number').value;
+                const tripInvoiceId = document.getElementById('trip-invoice-id').value;
+                
+                if (!tripDate || !tripNumber) {
+                    alert('Please enter trip date and trip number!');
+                    return;
+                }
+                
+                const trip = {
+                    id: Date.now(),
+                    date: tripDate,
+                    number: tripNumber,
+                    invoiceId: tripInvoiceId,
+                    createdAt: new Date().toISOString()
+                };
+                
+                saveTrip(trip);
+                setCurrentTrip(trip);
+                
+                // Clear form
+                document.getElementById('trip-date').value = '';
+                document.getElementById('trip-number').value = '';
+                document.getElementById('trip-invoice-id').value = '';
+                
+                alert('Trip created successfully!');
             });
             
             // Island selection change in form section
@@ -1667,6 +1890,18 @@
                 }
             });
             
+            // Quick customer registration button
+            document.getElementById('quick-register-btn').addEventListener('click', function() {
+                if (!currentIsland) {
+                    alert('Please select an island first!');
+                    return;
+                }
+                
+                // Show customer registration form
+                document.getElementById('customer-registration').style.display = 'block';
+                document.getElementById('island-customers').style.display = 'none';
+            });
+            
             // Date filter functionality
             document.getElementById('apply-filter').addEventListener('click', function() {
                 updateDashboard();
@@ -1675,6 +1910,12 @@
             document.getElementById('reset-filter').addEventListener('click', function() {
                 document.getElementById('start-date').value = '';
                 document.getElementById('end-date').value = '';
+                document.getElementById('trip-filter').value = 'all';
+                updateDashboard();
+            });
+            
+            // Trip filter functionality
+            document.getElementById('trip-filter').addEventListener('change', function() {
                 updateDashboard();
             });
             
@@ -1688,34 +1929,57 @@
                 });
             });
             
+            // Customer form submission
+            document.getElementById('customer-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const customerName = document.getElementById('customer-name').value;
+                const contact = document.getElementById('contact').value;
+                const address = document.getElementById('address').value;
+                
+                if (!customerName || !contact || !currentIsland) {
+                    alert('Please fill all required fields and select an island!');
+                    return;
+                }
+                
+                // Create customer object
+                const customer = {
+                    id: Date.now(),
+                    name: customerName,
+                    contact: contact,
+                    address: address,
+                    island: currentIsland
+                };
+                
+                // Save to Firebase
+                saveCustomer(customer);
+                
+                // Set as current customer
+                currentCustomerId = customer.id;
+                
+                // Show product entry form
+                document.getElementById('product-details').style.display = 'block';
+                document.getElementById('customer-registration').style.display = 'none';
+                
+                alert('Customer registered successfully! You can now add products.');
+            });
+            
             // Add products button
             document.getElementById('add-products-btn').addEventListener('click', function() {
                 document.getElementById('product-details').style.display = 'block';
             });
             
-            // Generate trip number
-            document.getElementById('generate-trip-number').addEventListener('click', function() {
-                const date = new Date();
-                const year = date.getFullYear().toString().substr(-2);
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                
-                // Get the next trip number for this year/month
-                database.ref('tripCounter/' + year + month).once('value').then((snapshot) => {
-                    let counter = snapshot.val() || 1;
-                    tripNumber = `TR${year}${month}/${counter.toString().padStart(3, '0')}`;
-                    document.getElementById('trip-number').value = tripNumber;
-                    
-                    // Increment the counter for next time
-                    database.ref('tripCounter/' + year + month).set(counter + 1);
-                });
-            });
-            
             // Product selection change - auto-fill boat fee
             document.getElementById('product-select').addEventListener('change', function() {
-                const productName = this.value;
-                if (productName && productBoatFees[productName]) {
-                    // Auto-select boat fee if available
-                    document.getElementById('product-boat-fee').value = productBoatFees[productName];
+                const productId = this.value;
+                if (productId) {
+                    // Get the boat fee for this product
+                    database.ref('productsWithFees/' + productId).once('value').then((snapshot) => {
+                        const productData = snapshot.val();
+                        if (productData && productData.fee) {
+                            document.getElementById('boat-fee-input').value = productData.fee;
+                        }
+                    });
                 }
             });
             
@@ -1724,12 +1988,12 @@
                 e.preventDefault();
                 
                 if (!currentCustomerId) {
-                    alert('Please select a customer first!');
+                    alert('Please register or select a customer first!');
                     return;
                 }
                 
-                if (!tripNumber) {
-                    alert('Please generate a trip number first!');
+                if (!currentTrip) {
+                    alert('Please select a trip first!');
                     return;
                 }
                 
@@ -1737,20 +2001,18 @@
                 const productName = document.getElementById('product-select').options[document.getElementById('product-select').selectedIndex].text;
                 const unit = document.getElementById('product-unit').value;
                 const qty = document.getElementById('product-qty-input').value;
+                const boatFee = document.getElementById('boat-fee-input').value;
                 const description = document.getElementById('product-desc-input').value;
                 const date = document.getElementById('product-date').value;
                 const time = document.getElementById('product-time').value;
                 const paymentMethod = document.getElementById('payment-method').value;
-                const productBoatFee = document.getElementById('product-boat-fee').value;
                 
-                if (!productId || !qty || !productBoatFee) {
-                    alert('Please select a product, enter quantity, and select boat fee!');
+                if (!productId || !qty || !boatFee) {
+                    alert('Please select a product and enter quantity and boat fee!');
                     return;
                 }
                 
-                // Calculate boat fee amount
-                const boatFeeAmount = boatFeeAmounts[productBoatFee] || 0;
-                const subtotal = (parseFloat(qty) * parseFloat(boatFeeAmount)).toFixed(2);
+                const subtotal = (parseFloat(qty) * parseFloat(boatFee)).toFixed(2);
                 
                 // Add product to the list
                 customerProducts.push({
@@ -1758,14 +2020,13 @@
                     productName,
                     unit,
                     qty,
-                    boatFee: productBoatFee,
-                    boatFeeAmount: boatFeeAmount,
+                    boatFeeAmount: boatFee,
                     subtotal,
                     description,
                     date,
                     time,
-                    tripNumber,
-                    paymentMethod
+                    paymentMethod,
+                    tripId: currentTrip.id
                 });
                 
                 // Update the products table
@@ -1774,17 +2035,22 @@
                 // Reset form
                 document.getElementById('product-select').value = '';
                 document.getElementById('product-qty-input').value = '1';
+                document.getElementById('boat-fee-input').value = '';
                 document.getElementById('product-desc-input').value = '';
-                document.getElementById('product-boat-fee').value = '';
                 document.getElementById('product-date').valueAsDate = new Date();
                 
                 alert('Product added to order!');
             });
             
-            // Finish order button
-            document.getElementById('finish-order-btn').addEventListener('click', function() {
+            // Save invoice button
+            document.getElementById('save-invoice-btn').addEventListener('click', function() {
                 if (customerProducts.length === 0) {
                     alert('Please add at least one product to the order!');
+                    return;
+                }
+                
+                if (!currentTrip) {
+                    alert('Please select a trip first!');
                     return;
                 }
                 
@@ -1800,9 +2066,9 @@
                     products: customerProducts,
                     date: new Date().toISOString(),
                     paymentStatus: document.getElementById('payment-method').value === 'not-paid' ? 'unpaid' : 'paid',
-                    tripNumber: tripNumber,
                     totalAmount: totalAmount,
-                    paymentMethod: document.getElementById('payment-method').value
+                    paymentMethod: document.getElementById('payment-method').value,
+                    tripId: currentTrip.id
                 };
                 
                 // Save to Firebase
@@ -1819,13 +2085,12 @@
                 // Reset variables
                 currentCustomerId = null;
                 customerProducts = [];
-                tripNumber = "";
                 currentOrderId = null;
                 
                 // Update island customers list
                 loadIslandCustomers(currentIsland);
                 
-                alert('Order saved successfully!');
+                alert('Invoice saved successfully!');
             });
             
             // Add island functionality
@@ -1842,28 +2107,14 @@
             // Add product functionality
             document.getElementById('add-product').addEventListener('click', function() {
                 const productName = document.getElementById('new-product').value.trim();
-                const productBoatFee = document.getElementById('new-product-boatfee').value.trim();
+                const productFee = document.getElementById('new-product-fee').value;
                 
-                if (productName && productBoatFee) {
-                    addProduct(productName, productBoatFee);
+                if (productName && productFee) {
+                    addProduct(productName, productFee);
                     document.getElementById('new-product').value = '';
-                    document.getElementById('new-product-boatfee').value = '';
+                    document.getElementById('new-product-fee').value = '';
                 } else {
                     alert('Please enter a product name and boat fee!');
-                }
-            });
-            
-            // Add boat fee functionality
-            document.getElementById('add-boatfee').addEventListener('click', function() {
-                const boatFeeName = document.getElementById('new-boatfee').value.trim();
-                const boatFeeAmount = document.getElementById('new-boatfee-amount').value;
-                
-                if (boatFeeName && boatFeeAmount) {
-                    addBoatFee(boatFeeName, boatFeeAmount);
-                    document.getElementById('new-boatfee').value = '';
-                    document.getElementById('new-boatfee-amount').value = '';
-                } else {
-                    alert('Please enter a boat fee name and amount!');
                 }
             });
             
@@ -1882,13 +2133,14 @@
             
             // Initialize with today's date
             document.getElementById('product-date').valueAsDate = new Date();
+            document.getElementById('trip-date').valueAsDate = new Date();
             
             // Data functions
             function initializeData() {
                 // Load islands, products, and boat fees from Firebase
                 loadIslandsFromFirebase();
                 loadProductsFromFirebase();
-                loadBoatFeesFromFirebase();
+                loadTripsFromFirebase();
                 
                 // Set up real-time listeners
                 database.ref('customers').on('value', () => {
@@ -1899,6 +2151,16 @@
                     loadCustomers();
                     updateDashboard();
                 });
+                database.ref('trips').on('value', () => {
+                    loadTrips();
+                    updateTripFilter();
+                });
+            }
+            
+            function setCurrentTrip(trip) {
+                currentTrip = trip;
+                document.getElementById('current-trip-info').textContent = `Current Trip: ${trip.number} (${trip.date})`;
+                document.getElementById('entry-trip-info').textContent = `Current Trip: ${trip.number} (${trip.date})`;
             }
             
             function loadIslandCustomers(islandName) {
@@ -1919,8 +2181,14 @@
                     
                     // Get orders to calculate total value
                     getOrders((orders) => {
+                        // Filter orders by current trip if selected
+                        let filteredOrders = orders;
+                        if (currentTrip) {
+                            filteredOrders = orders.filter(order => order.tripId == currentTrip.id);
+                        }
+                        
                         islandCustomers.forEach(customer => {
-                            const customerOrders = orders.filter(order => order.customerId == customer.id);
+                            const customerOrders = filteredOrders.filter(order => order.customerId == customer.id);
                             const customerTotal = customerOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount || 0), 0);
                             totalValue += customerTotal;
                             
@@ -1956,18 +2224,18 @@
                         document.getElementById('product-details').style.display = 'block';
                         document.getElementById('customer-registration').style.display = 'none';
                         
-                        // Generate trip number automatically
-                        document.getElementById('generate-trip-number').click();
-                        
                         // Load customer orders to continue adding products
                         getCustomerOrders(customerId, (orders) => {
-                            if (orders.length > 0) {
+                            // Filter orders by current trip if selected
+                            let filteredOrders = orders;
+                            if (currentTrip) {
+                                filteredOrders = orders.filter(order => order.tripId == currentTrip.id);
+                            }
+                            
+                            if (filteredOrders.length > 0) {
                                 // Use the latest order
-                                const latestOrder = orders[orders.length - 1];
+                                const latestOrder = filteredOrders[filteredOrders.length - 1];
                                 currentOrderId = latestOrder.id;
-                                tripNumber = latestOrder.tripNumber;
-                                
-                                document.getElementById('trip-number').value = tripNumber;
                                 
                                 // Load products if any
                                 customerProducts = latestOrder.products || [];
@@ -1994,66 +2262,35 @@
             }
             
             function loadProductsFromFirebase() {
-                database.ref('products').once('value').then((snapshot) => {
+                database.ref('productsWithFees').once('value').then((snapshot) => {
                     const products = snapshot.val();
                     if (!products) {
-                        // Add default products if none exist
-                        const defaultProducts = [
-                            {name: 'Rice', boatFee: 'Boat 1'},
-                            {name: 'Flour', boatFee: 'Boat 1'},
-                            {name: 'Sugar', boatFee: 'Boat 2'},
-                            {name: 'Oil', boatFee: 'Boat 2'},
-                            {name: 'Tea', boatFee: 'Boat 3'}
-                        ];
+                        // Add default products with fees if none exist
+                        const defaultProducts = {
+                            'Cement': { name: 'Cement', fee: 5.00 },
+                            'Plywood': { name: 'Plywood', fee: 10.00 },
+                            'Box -Large': { name: 'Box -Large', fee: 15.00 },
+                            'Box-Small': { name: 'Box-Small', fee: 8.00 },
+                            'Box- Medium': { name: 'Box- Medium', fee: 12.00 }
+                        };
                         
-                        // Store product boat fees in global variables
-                        defaultProducts.forEach(product => {
-                            productBoatFees[product.name] = product.boatFee;
-                        });
-                        
-                        database.ref('products').set(defaultProducts).then(() => {
+                        database.ref('productsWithFees').set(defaultProducts).then(() => {
                             updateProductSelect(defaultProducts);
                         });
                     } else {
-                        // Extract product names and boat fees
-                        const productNames = products.map(product => product.name);
-                        
-                        // Store product boat fees in global variables
-                        products.forEach(product => {
-                            productBoatFees[product.name] = product.boatFee;
-                        });
-                        
                         updateProductSelect(products);
                     }
                 });
             }
             
-            function loadBoatFeesFromFirebase() {
-                database.ref('boatFees').once('value').then((snapshot) => {
-                    const boatFees = snapshot.val();
-                    if (!boatFees) {
-                        // Add default boat fees if none exist
-                        const defaultBoatFees = [
-                            {name: 'Boat 1', amount: 50.00},
-                            {name: 'Boat 2', amount: 75.00},
-                            {name: 'Boat 3', amount: 100.00}
-                        ];
-                        
-                        // Store boat fee amounts in global variables
-                        defaultBoatFees.forEach(fee => {
-                            boatFeeAmounts[fee.name] = fee.amount;
-                        });
-                        
-                        database.ref('boatFees').set(defaultBoatFees).then(() => {
-                            updateBoatFeeSelect(defaultBoatFees);
-                        });
-                    } else {
-                        // Store boat fee amounts in global variables
-                        boatFees.forEach(fee => {
-                            boatFeeAmounts[fee.name] = fee.amount;
-                        });
-                        
-                        updateBoatFeeSelect(boatFees);
+            function loadTripsFromFirebase() {
+                database.ref('trips').once('value').then((snapshot) => {
+                    const trips = snapshot.val();
+                    if (trips && Object.keys(trips).length > 0) {
+                        // Get the most recent trip
+                        const tripIds = Object.keys(trips);
+                        const mostRecentTripId = tripIds[tripIds.length - 1];
+                        setCurrentTrip(trips[mostRecentTripId]);
                     }
                 });
             }
@@ -2085,6 +2322,29 @@
                 });
             }
             
+            function updateTripFilter() {
+                const tripFilter = document.getElementById('trip-filter');
+                
+                // Clear existing options except the first one
+                while (tripFilter.options.length > 1) {
+                    tripFilter.remove(1);
+                }
+                
+                // Get trips from Firebase
+                database.ref('trips').once('value').then((snapshot) => {
+                    const trips = snapshot.val();
+                    if (!trips) return;
+                    
+                    // Add trips to filter
+                    Object.values(trips).forEach(trip => {
+                        const option = document.createElement('option');
+                        option.value = trip.id;
+                        option.textContent = `${trip.number} (${trip.date})`;
+                        tripFilter.appendChild(option);
+                    });
+                });
+            }
+            
             function updateProductSelect(products) {
                 const productSelect = document.getElementById('product-select');
                 
@@ -2094,28 +2354,12 @@
                 }
                 
                 // Add products to select
-                products.forEach(product => {
+                Object.keys(products).forEach(productId => {
+                    const product = products[productId];
                     const option = document.createElement('option');
-                    option.value = product.name || product;
-                    option.textContent = product.name || product;
+                    option.value = productId;
+                    option.textContent = product.name;
                     productSelect.appendChild(option);
-                });
-            }
-            
-            function updateBoatFeeSelect(boatFees) {
-                const boatFeeSelect = document.getElementById('product-boat-fee');
-                
-                // Clear existing options except the first one
-                while (boatFeeSelect.options.length > 1) {
-                    boatFeeSelect.remove(1);
-                }
-                
-                // Add boat fees to select
-                boatFees.forEach(fee => {
-                    const option = document.createElement('option');
-                    option.value = fee.name;
-                    option.textContent = `${fee.name} (RF ${fee.amount})`;
-                    boatFeeSelect.appendChild(option);
                 });
             }
             
@@ -2154,73 +2398,108 @@
                 });
             }
             
-            function loadProducts() {
-                const productList = document.getElementById('product-list');
+            function loadTrips() {
+                const tripList = document.getElementById('trip-list');
                 
-                database.ref('products').once('value').then((snapshot) => {
-                    const products = snapshot.val();
+                database.ref('trips').once('value').then((snapshot) => {
+                    const trips = snapshot.val();
                     
                     // Clear current list
-                    productList.innerHTML = '<h3>Available Products</h3>';
+                    tripList.innerHTML = '';
                     
-                    if (!products || products.length === 0) {
-                        productList.innerHTML += '<p>No products added yet.</p>';
+                    if (!trips || Object.keys(trips).length === 0) {
+                        tripList.innerHTML = '<p>No trips created yet.</p>';
                         return;
                     }
                     
-                    // Create product items
-                    products.forEach(product => {
-                        const productItem = document.createElement('div');
-                        productItem.className = 'product-item';
-                        productItem.innerHTML = `
-                            <div class="product-name">${product.name}${product.boatFee ? ' (' + product.boatFee + ')' : ''}</div>
-                            <button class="btn btn-danger btn-sm delete-product" data-product="${product.name}"><i class="fas fa-trash"></i> Delete</button>
+                    // Create trip items
+                    Object.values(trips).forEach(trip => {
+                        const tripItem = document.createElement('div');
+                        tripItem.className = 'trip-item';
+                        tripItem.innerHTML = `
+                            <div class="trip-info">
+                                <div><strong>${trip.number}</strong> - ${trip.date}</div>
+                                <div>Invoice ID: ${trip.invoiceId || 'N/A'}</div>
+                            </div>
+                            <div class="trip-actions">
+                                <button class="btn btn-primary btn-sm select-trip" data-id="${trip.id}">Select</button>
+                                <button class="btn btn-danger btn-sm delete-trip" data-id="${trip.id}">Delete</button>
+                            </div>
                         `;
                         
-                        productList.appendChild(productItem);
+                        tripList.appendChild(tripItem);
+                        
+                        // Add event listener to select button
+                        tripItem.querySelector('.select-trip').addEventListener('click', function() {
+                            setCurrentTrip(trip);
+                            alert(`Trip ${trip.number} selected!`);
+                        });
                         
                         // Add event listener to delete button
-                        productItem.querySelector('.delete-product').addEventListener('click', function() {
-                            if (confirm(`Are you sure you want to delete ${product.name}?`)) {
-                                deleteProduct(product.name);
+                        tripItem.querySelector('.delete-trip').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete trip ${trip.number}?`)) {
+                                deleteTrip(trip.id);
                             }
                         });
                     });
                 });
             }
             
-            function loadBoatFees() {
-                const boatFeeList = document.getElementById('boatfee-list');
+            function loadProducts() {
+                const productList = document.getElementById('product-list');
                 
-                database.ref('boatFees').once('value').then((snapshot) => {
-                    const boatFees = snapshot.val();
+                database.ref('productsWithFees').once('value').then((snapshot) => {
+                    const products = snapshot.val();
                     
                     // Clear current list
-                    boatFeeList.innerHTML = '<h3>Available Boat Fees</h3>';
+                    productList.innerHTML = '<h3>Available Products</h3>';
                     
-                    if (!boatFees || boatFees.length === 0) {
-                        boatFeeList.innerHTML += '<p>No boat fees added yet.</p>';
+                    if (!products || Object.keys(products).length === 0) {
+                        productList.innerHTML += '<p>No products added yet.</p>';
                         return;
                     }
                     
-                    // Create boat fee items
-                    boatFees.forEach(boatFee => {
-                        const boatFeeElement = document.createElement('div');
-                        boatFeeElement.className = 'boatfee-item';
-                        boatFeeElement.innerHTML = `
-                            <div class="boatfee-name">${boatFee.name} - RF ${boatFee.amount.toFixed(2)}</div>
-                            <button class="btn btn-danger btn-sm delete-boatfee" data-boatfee="${boatFee.name}"><i class="fas fa-trash"></i> Delete</button>
+                    // Create product items
+                    Object.keys(products).forEach(productId => {
+                        const product = products[productId];
+                        const productItem = document.createElement('div');
+                        productItem.className = 'product-item-with-fee';
+                        productItem.innerHTML = `
+                            <div class="product-name">${product.name} <span class="product-fee-display">(RF ${product.fee})</span></div>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning btn-sm edit-product-fee" data-id="${productId}"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-danger btn-sm delete-product" data-id="${productId}"><i class="fas fa-trash"></i> Delete</button>
+                            </div>
                         `;
                         
-                        boatFeeList.appendChild(boatFeeElement);
+                        productList.appendChild(productItem);
+                        
+                        // Add event listener to edit button
+                        productItem.querySelector('.edit-product-fee').addEventListener('click', function() {
+                            const newFee = prompt(`Enter new boat fee for ${product.name}:`, product.fee);
+                            if (newFee !== null && !isNaN(newFee) && newFee >= 0) {
+                                updateProductFee(productId, parseFloat(newFee));
+                            }
+                        });
                         
                         // Add event listener to delete button
-                        boatFeeElement.querySelector('.delete-boatfee').addEventListener('click', function() {
-                            if (confirm(`Are you sure you want to delete ${boatFee.name}?`)) {
-                                deleteBoatFee(boatFee.name);
+                        productItem.querySelector('.delete-product').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete ${product.name}?`)) {
+                                deleteProduct(productId);
                             }
                         });
                     });
+                });
+            }
+            
+            function saveTrip(trip) {
+                database.ref('trips/' + trip.id).set(trip);
+            }
+            
+            function deleteTrip(tripId) {
+                database.ref('trips/' + tripId).remove().then(() => {
+                    loadTrips();
+                    alert('Trip deleted successfully!');
                 });
             }
             
@@ -2252,25 +2531,26 @@
                 });
             }
             
-            function addProduct(productName, productBoatFee) {
-                database.ref('products').once('value').then((snapshot) => {
-                    const products = snapshot.val() || [];
+            function addProduct(productName, productFee) {
+                database.ref('productsWithFees').once('value').then((snapshot) => {
+                    const products = snapshot.val() || {};
                     
                     // Check if product already exists
-                    const productExists = products.some(product => product.name === productName);
+                    let productExists = false;
+                    Object.keys(products).forEach(id => {
+                        if (products[id].name.toLowerCase() === productName.toLowerCase()) {
+                            productExists = true;
+                        }
+                    });
                     
                     if (!productExists) {
-                        const newProduct = {
+                        const productId = Date.now().toString();
+                        products[productId] = {
                             name: productName,
-                            boatFee: productBoatFee
+                            fee: parseFloat(productFee)
                         };
                         
-                        products.push(newProduct);
-                        
-                        // Update global variables
-                        productBoatFees[productName] = productBoatFee;
-                        
-                        database.ref('products').set(products).then(() => {
+                        database.ref('productsWithFees').set(products).then(() => {
                             updateProductSelect(products);
                             loadProducts();
                             alert('Product added successfully!');
@@ -2281,62 +2561,17 @@
                 });
             }
             
-            function deleteProduct(productName) {
-                database.ref('products').once('value').then((snapshot) => {
-                    const products = snapshot.val();
-                    const updatedProducts = products.filter(product => product.name !== productName);
-                    database.ref('products').set(updatedProducts).then(() => {
-                        updateProductSelect(updatedProducts);
-                        loadProducts();
-                        
-                        // Remove from global variables
-                        delete productBoatFees[productName];
-                        
-                        alert('Product deleted successfully!');
-                    });
+            function updateProductFee(productId, newFee) {
+                database.ref('productsWithFees/' + productId + '/fee').set(newFee).then(() => {
+                    loadProducts();
+                    alert('Product fee updated successfully!');
                 });
             }
             
-            function addBoatFee(boatFeeName, boatFeeAmount) {
-                database.ref('boatFees').once('value').then((snapshot) => {
-                    const boatFees = snapshot.val() || [];
-                    
-                    // Check if boat fee already exists
-                    const boatFeeExists = boatFees.some(fee => fee.name === boatFeeName);
-                    
-                    if (!boatFeeExists) {
-                        boatFees.push({
-                            name: boatFeeName,
-                            amount: parseFloat(boatFeeAmount)
-                        });
-                        
-                        // Update global variables
-                        boatFeeAmounts[boatFeeName] = parseFloat(boatFeeAmount);
-                        
-                        database.ref('boatFees').set(boatFees).then(() => {
-                            updateBoatFeeSelect(boatFees);
-                            loadBoatFees();
-                            alert('Boat Fee added successfully!');
-                        });
-                    } else {
-                        alert('This boat fee already exists!');
-                    }
-                });
-            }
-            
-            function deleteBoatFee(boatFeeName) {
-                database.ref('boatFees').once('value').then((snapshot) => {
-                    const boatFees = snapshot.val();
-                    const updatedBoatFees = boatFees.filter(fee => fee.name !== boatFeeName);
-                    database.ref('boatFees').set(updatedBoatFees).then(() => {
-                        updateBoatFeeSelect(updatedBoatFees);
-                        loadBoatFees();
-                        
-                        // Remove from global variables
-                        delete boatFeeAmounts[boatFeeName];
-                        
-                        alert('Boat Fee deleted successfully!');
-                    });
+            function deleteProduct(productId) {
+                database.ref('productsWithFees/' + productId).remove().then(() => {
+                    loadProducts();
+                    alert('Product deleted successfully!');
                 });
             }
             
@@ -2383,15 +2618,26 @@
                     orderTotal += parseFloat(product.subtotal);
                     
                     const row = document.createElement('tr');
+                    
+                    // Apply styling based on payment method
+                    if (product.paymentMethod === 'not-paid') {
+                        row.classList.add('unpaid-row');
+                    } else {
+                        row.classList.add('paid-row');
+                    }
+                    
+                    // Add payment method class for styling
+                    const paymentMethodClass = `payment-method-${product.paymentMethod}`;
+                    
                     row.innerHTML = `
+                        <td>${product.date} ${product.time}</td>
                         <td>${product.productName}</td>
                         <td>${product.qty}</td>
                         <td>${product.unit}</td>
-                        <td>${product.boatFee} (RF ${product.boatFeeAmount})</td>
-                        <td>${product.tripNumber}</td>
-                        <td>${product.date}</td>
-                        <td>${product.time}</td>
+                        <td>RF ${product.boatFeeAmount}</td>
+                        <td>RF ${product.subtotal}</td>
                         <td>${product.description || '-'}</td>
+                        <td class="payment-method-cell ${paymentMethodClass}">${product.paymentMethod}</td>
                         <td class="action-buttons">
                             <button class="btn btn-warning btn-xs edit-product" data-index="${index}">
                                 <i class="fas fa-edit"></i>
@@ -2419,8 +2665,8 @@
                         document.getElementById('product-select').value = product.productId;
                         document.getElementById('product-unit').value = product.unit;
                         document.getElementById('product-qty-input').value = product.qty;
+                        document.getElementById('boat-fee-input').value = product.boatFeeAmount;
                         document.getElementById('product-desc-input').value = product.description || '';
-                        document.getElementById('product-boat-fee').value = product.boatFee || '';
                         document.getElementById('payment-method').value = product.paymentMethod;
                         document.getElementById('product-date').value = product.date;
                         document.getElementById('product-time').value = product.time;
@@ -2585,13 +2831,13 @@
                                 </div>
                             </div>
                             <div class="trip-products">
-                                <strong>Trip Number:</strong> ${order.tripNumber}<br>
-                                <strong>Payment Method:</strong> ${order.paymentMethod}<br>
                                 <strong>Total Amount:</strong> RF ${order.totalAmount}<br>
+                                <strong>Payment Method:</strong> ${order.paymentMethod}<br>
+                                <strong>Trip:</strong> ${order.tripId ? getTripName(order.tripId) : 'N/A'}<br>
                                 <strong>Products:</strong>
                                 <ul>
                                     ${order.products.map(product => `
-                                        <li>${product.productName} - ${product.qty} ${product.unit} @ ${product.boatFee} (RF ${product.boatFeeAmount}) = RF ${product.subtotal}</li>
+                                        <li>${product.date} ${product.time} - ${product.productName} - ${product.qty} ${product.unit} @ RF ${product.boatFeeAmount} = RF ${product.subtotal}</li>
                                     `).join('')}
                                 </ul>
                             </div>
@@ -2665,11 +2911,6 @@
                                     database.ref('orders/' + orderId).once('value').then((snapshot) => {
                                         const order = snapshot.val();
                                         if (order) {
-                                            // Set trip number
-                                            document.getElementById('trip-number').value = order.tripNumber;
-                                            tripNumber = order.tripNumber;
-                                            currentOrderId = order.id;
-                                            
                                             // Set products
                                             customerProducts = order.products;
                                             updateProductsTable();
@@ -2695,6 +2936,11 @@
                 });
             }
             
+            function getTripName(tripId) {
+                // This would be replaced with actual trip data lookup
+                return `Trip ${tripId}`;
+            }
+            
             function updateOrderPaymentStatus(orderId, status) {
                 database.ref('orders/' + orderId + '/paymentStatus').set(status);
             }
@@ -2704,75 +2950,125 @@
                 database.ref('customers/' + order.customerId).once('value').then((snapshot) => {
                     const customer = snapshot.val();
                     
-                    const doc = new jsPDF();
-                    
-                    // Add logo and header
-                    doc.setFontSize(20);
-                    doc.setTextColor(26, 42, 108);
-                    doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
-                    doc.setFontSize(16);
-                    doc.text('INVOICE', 105, 30, { align: 'center' });
-                    
-                    // Add invoice details
-                    doc.setFontSize(12);
-                    doc.setTextColor(0, 0, 0);
-                    doc.text(`Invoice ID: BT${order.id}`, 20, 45);
-                    doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 20, 52);
-                    doc.text(`Time: ${new Date(order.date).toLocaleTimeString()}`, 20, 59);
-                    doc.text(`Island: ${customer.island}`, 20, 66);
-                    doc.text(`Trip Number: ${order.tripNumber}`, 20, 73);
-                    
-                    doc.text(`Customer: ${customer.name}`, 105, 45);
-                    doc.text(`Contact: ${customer.contact}`, 105, 52);
-                    doc.text(`Address: ${customer.address || ''}`, 105, 59);
-                    doc.text(`Status: ${order.paymentStatus.toUpperCase()}`, 105, 66);
-                    doc.text(`Payment Method: ${order.paymentMethod}`, 105, 73);
-                    
-                    // Add products table
-                    const tableColumn = ["Product", "Unit", "Qty", "Boat Fee", "Fee Amount", "Subtotal"];
-                    const tableRows = [];
-                    
-                    order.products.forEach(product => {
-                        const productData = [
-                            product.productName,
-                            product.unit,
-                            product.qty,
-                            product.boatFee,
-                            product.boatFeeAmount,
-                            product.subtotal
-                        ];
-                        tableRows.push(productData);
-                    });
-                    
-                    // Add total row
-                    tableRows.push([
-                        'TOTAL',
-                        '',
-                        '',
-                        '',
-                        '',
-                        order.totalAmount
-                    ]);
-                    
-                    doc.autoTable({
-                        head: [tableColumn],
-                        body: tableRows,
-                        startY: 90,
-                        theme: 'grid',
-                        headStyles: {
-                            fillColor: [26, 42, 108],
-                            textColor: [255, 255, 255]
-                        },
-                        foot: [['TOTAL', '', '', '', '', order.totalAmount]],
-                        footStyles: {
-                            fillColor: [253, 187, 45],
-                            textColor: [0, 0, 0]
-                        }
-                    });
-                    
-                    // Save the PDF
-                    doc.save(`Invoice_BT${order.id}_${customer.name}.pdf`);
+                    // Get trip details if available
+                    let tripInfo = {};
+                    if (order.tripId) {
+                        database.ref('trips/' + order.tripId).once('value').then((tripSnapshot) => {
+                            tripInfo = tripSnapshot.val() || {};
+                            
+                            createInvoiceDocument(order, customer, tripInfo);
+                        });
+                    } else {
+                        createInvoiceDocument(order, customer, {});
+                    }
                 });
+            }
+            
+            function createInvoiceDocument(order, customer, tripInfo) {
+                const doc = new jsPDF();
+                
+                // Add logo and header
+                doc.setFontSize(20);
+                doc.setTextColor(26, 42, 108);
+                doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
+                doc.setFontSize(16);
+                doc.text('INVOICE', 105, 30, { align: 'center' });
+                
+                // Add invoice details - Left side (Customer Info)
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Customer: ${customer.name}`, 16, 45);
+                doc.text(`Contact: ${customer.contact}`, 16, 52);
+                doc.text(`Island: ${customer.island}`, 16, 59);
+                
+                // Add invoice details - Right side (Invoice Info)
+                doc.text(`Invoice ID: ${tripInfo.invoiceId || `BT${order.id}`}`, 195, 45, { align: 'right' });
+                doc.text(`Date: ${new Date(order.date).toLocaleDateString()}`, 195, 52, { align: 'right' });
+                doc.text(`Trip: ${tripInfo.number || 'N/A'}`, 195, 59, { align: 'right' });
+                
+                // Add status and payment method
+                doc.text(`Status: ${order.paymentStatus.toUpperCase()}`, 16, 66);
+                doc.text(`Payment Method: ${order.paymentMethod}`, 17, 73);
+                
+                // Add products table
+                const tableColumn = ["Date & Time", "Product", "Qty", "Unit", "Boat Fee", "Payment Method", "Subtotal"];
+                const tableRows = [];
+                
+                order.products.forEach(product => {
+                    const productData = [
+                        `${product.date} ${product.time}`,
+                        product.productName,
+                        product.qty,
+                        product.unit,
+                        `RF ${product.boatFeeAmount}`,
+                        product.paymentMethod,
+                        `RF ${product.subtotal}`
+                    ];
+                    tableRows.push(productData);
+                });
+                
+                // Add total row
+                tableRows.push([
+                    'TOTAL',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    `RF ${order.totalAmount}`
+                ]);
+                
+                // Generate the table
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 90,
+                    theme: 'grid',
+                    headStyles: {
+                        fillColor: [26, 42, 108],
+                        textColor: [255, 255, 255]
+                    },
+                    foot: [['TOTAL', '', '', '', '', '', `RF ${order.totalAmount}`]],
+                    footStyles: {
+                        fillColor: [253, 187, 45],
+                        textColor: [0, 0, 0]
+                    },
+                    didDrawCell: function(data) {
+                        // Highlight unpaid products in red
+                        if (data.section === 'body' && data.column.index === 5 && data.cell.raw === 'not-paid') {
+                            doc.setFillColor(255, 230, 230);
+                            doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                        }
+                    }
+                });
+                
+                 // Add Island Rihaakuru seal to the bottom right
+                const finalY = doc.lastAutoTable.finalY + 10;
+                doc.addImage(islandSealBase64, 'PNG', 150, finalY, 40, 40);
+                
+                
+                // Add bank details with styling
+               
+                
+                doc.setFontSize(12);
+                doc.setTextColor(26, 42, 108);
+                doc.text('Bank Details:', 25, finalY + 8);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${bankDetails.bankNameBML}`, 25, finalY + 16);
+                doc.text(`Account: ${bankDetails.accountNumberBML}`, 25, finalY + 22);
+                
+                doc.text(`${bankDetails.bankNameMIB}`, 25, finalY + 30);
+                doc.text(`Account: ${bankDetails.accountNumberMIB}`, 25, finalY + 36);
+                
+                // Add Thank You message at the bottom center
+                doc.setFontSize(12);
+                doc.setTextColor(26, 42, 108);
+                doc.text('Thank You For Your Business!', 105, finalY + 50, { align: 'center' });
+                
+                // Save the PDF
+                doc.save(`Invoice_${tripInfo.invoiceId || `BT${order.id}`}_${customer.name}.pdf`);
             }
             
             // Load payments for payment management
@@ -2811,15 +3107,15 @@
                             const paymentItem = document.createElement('div');
                             paymentItem.className = 'payment-item';
                             
-                            // Format date
+                              // Format date
                             const orderDate = new Date(order.date).toLocaleDateString();
                             
                             paymentItem.innerHTML = `
                                 <div class="payment-info">
                                     <p><strong>${customer.name}</strong> - ${customer.island} (${orderDate})</p>
-                                    <p>Trip: ${order.tripNumber}</p>
                                     <p>${order.products.length} products</p>
                                     <p>Payment Method: ${order.paymentMethod}</p>
+                                    <p>Trip: ${order.tripId ? getTripName(order.tripId) : 'N/A'}</p>
                                 </div>
                                 <div class="payment-amount">
                                     RF ${order.totalAmount}
@@ -2831,7 +3127,6 @@
                                     <button class="btn btn-primary btn-sm view-payment" data-id="${order.id}">View</button>
                                 </div>
                             `;
-                            
                             paymentList.appendChild(paymentItem);
                             
                             // Add event listener to view button
@@ -2851,6 +3146,7 @@
             function updateDashboard() {
                 const startDate = document.getElementById('start-date').value;
                 const endDate = document.getElementById('end-date').value;
+                const tripFilter = document.getElementById('trip-filter').value;
                 
                 getOrders((orders) => {
                     // Filter orders by date if dates are selected
@@ -2865,9 +3161,13 @@
                         });
                     }
                     
+                    // Filter by trip if selected
+                    if (tripFilter !== 'all') {
+                        filteredOrders = filteredOrders.filter(order => order.tripId == tripFilter);
+                    }
+                    
                     // Calculate totals
                     let totalProducts = 0;
-                    let totalBoatFees = 0;
                     let totalOrders = filteredOrders.length;
                     let totalRevenue = 0;
                     let pendingBills = 0;
@@ -2881,13 +3181,11 @@
                         }
                         order.products.forEach(product => {
                             totalProducts += parseInt(product.qty) || 0;
-                            if (product.boatFee) totalBoatFees++;
                         });
                     });
                     
                     // Update dashboard values
                     document.getElementById('total-products').textContent = totalProducts;
-                    document.getElementById('total-boatfees').textContent = totalBoatFees;
                     document.getElementById('total-orders').textContent = totalOrders;
                     document.getElementById('total-revenue').textContent = 'RF ' + totalRevenue.toFixed(2);
                     document.getElementById('pending-bills').textContent = 'RF ' + pendingBills.toFixed(2);
@@ -2933,7 +3231,7 @@
                                 'rgba(40, 167, 69, 0.7)',
                                 'rgba(23, 162, 184, 0.7)',
                                 'rgba(108, 117, 125, 0.7)'
-                        ],
+                            ],
                             borderColor: [
                                 'rgba(26, 42, 108, 1)',
                                 'rgba(178, 31, 31, 1)',
@@ -2987,21 +3285,21 @@
                                             label: 'Orders by Island',
                                             data: Object.values(islandCounts),
                                             backgroundColor: [
-                                                'rgba(26, 42, 108, 0.7)',
-                                                'rgba(178, 31, 31, 0.7)',
-                                                'rgba(253, 187, 45, 0.7)',
-                                                'rgba(40, 167, 69, 0.7)',
-                                                'rgba(23, 162, 184, 0.7)',
-                                                'rgba(108, 117, 125, 0.7)'
-                                            ],
+                                'rgba(26, 42, 108, 0.7)',
+                                'rgba(178, 31, 31, 0.7)',
+                                'rgba(253, 187, 45, 0.7)',
+                                'rgba(40, 167, 69, 0.7)',
+                                'rgba(23, 162, 184, 0.7)',
+                                'rgba(108, 117, 125, 0.7)'
+                            ],
                                             borderColor: [
-                                                'rgba(26, 42, 108, 1)',
-                                                'rgba(178, 31, 31, 1)',
-                                                'rgba(253, 187, 45, 1)',
-                                                'rgba(40, 167, 69, 1)',
-                                                'rgba(23, 162, 184, 1)',
-                                                'rgba(108, 117, 125, 1)'
-                                            ],
+                                'rgba(26, 42, 108, 1)',
+                                'rgba(178, 31, 31, 1)',
+                                'rgba(253, 187, 45, 1)',
+                                'rgba(40, 167, 69, 1)',
+                                'rgba(23, 162, 184, 1)',
+                                'rgba(108, 117, 125, 1)'
+                            ],
                                             borderWidth: 1
                                         }]
                                     },
@@ -3069,7 +3367,13 @@
                     }
                 });
             }
-        });
+            
+            // Load customers for selection in the form section
+            function loadCustomersForSelection() {
+                // This function would load customers for any selection dropdowns in the form section
+                // Currently not implemented as the form section uses island-based customer loading
+            }
+        }); 
     </script>
 </body>
 </html>
