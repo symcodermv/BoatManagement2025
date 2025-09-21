@@ -336,11 +336,11 @@
             padding: 15px;
         }
         
-        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .trip-section, .user-section {
+        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .trip-section, .user-section, .admin-section {
             display: none;
         }
         
-        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .trip-section.active, .user-section.active {
+        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .trip-section.active, .user-section.active, .admin-section.active {
             display: block;
         }
         
@@ -1271,6 +1271,30 @@
                 top: 12px;
                 font-size: 1rem;
             }
+            
+            /* Hide header user profile on mobile */
+            .user-profile {
+                display: none;
+            }
+            
+            /* Show user info in sidebar */
+            .sidebar-user-info {
+                display: block;
+                padding: 15px 20px;
+                background: rgba(255,255,255,0.1);
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            
+            .sidebar-user-name {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            
+            .sidebar-user-role {
+                font-size: 12px;
+                opacity: 0.8;
+            }
         }
         
         /* Print styles for invoice */
@@ -1355,6 +1379,11 @@
             
             .mobile-product-grid {
                 display: block;
+            }
+            
+            /* Hide sidebar user info on desktop */
+            .sidebar-user-info {
+                display: none;
             }
         }
         
@@ -1580,6 +1609,48 @@
         .logout-btn:hover {
             background: rgba(255,255,255,0.3);
         }
+        
+        /* Admin Panel Styles */
+        .admin-panel {
+            background: #f5f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-controls button {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .admin-data-view {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Island customer count badge */
+        .island-customer-count {
+            background: #1a2a6c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1657,6 +1728,10 @@
                             <input type="checkbox" id="perm-user" class="perm-checkbox" data-perm="user">
                             <label for="perm-user">User Management</label>
                         </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-admin" class="perm-checkbox" data-perm="admin">
+                            <label for="perm-admin">Admin Panel</label>
+                        </div>
                     </div>
                 </div>
                 
@@ -1688,6 +1763,10 @@
     <!-- Mobile Sidebar -->
     <div class="overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
+        <div class="sidebar-user-info" id="sidebar-user-info">
+            <div class="sidebar-user-name" id="sidebar-user-name"></div>
+            <div class="sidebar-user-role" id="sidebar-user-role"></div>
+        </div>
         <div class="tab active" data-tab="dashboard">Dashboard</div>
         <div class="tab" data-tab="trip">Trip Management</div>
         <div class="tab" data-tab="form">Entry Form</div>
@@ -1696,6 +1775,7 @@
         <div class="tab" data-tab="product">Product Management</div>
         <div class="tab" data-tab="payment">Payment Management</div>
         <div class="tab" data-tab="user" id="user-management-tab" style="display: none;">User Management</div>
+        <div class="tab" data-tab="admin" id="admin-tab" style="display: none;">Admin Panel</div>
         <div class="tab" id="logout-btn" style="color: #ff6b6b;">
             <i class="fas fa-sign-out-alt"></i> Logout
         </div>
@@ -1741,6 +1821,7 @@
             <div class="tab" data-tab="product">Product Management</div>
             <div class="tab" data-tab="payment">Payment Management</div>
             <div class="tab" data-tab="user" id="user-tab" style="display: none;">User Management</div>
+            <div class="tab" data-tab="admin" id="admin-main-tab" style="display: none;">Admin Panel</div>
         </div>
         
         <div class="content">
@@ -1887,7 +1968,7 @@
                 
                 <!-- Island Customers List -->
                 <div class="island-customers" id="island-customers" style="display: none;">
-                    <h3>Customers in <span id="selected-island-name"></span></h3>
+                    <h3>Customers in <span id="selected-island-name"></span> <span class="island-customer-count" id="island-customer-count">0</span></h3>
                     <div id="island-customers-list">
                         <!-- Customers will be listed here -->
                     </div>
@@ -2213,12 +2294,43 @@
                                 <input type="checkbox" id="system-perm-user" class="system-perm-checkbox" data-perm="user">
                                 <label for="system-perm-user">User Management</label>
                             </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-admin" class="system-perm-checkbox" data-perm="admin">
+                                <label for="system-perm-admin">Admin Panel</label>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="user-list" id="system-user-list">
                         <h3>System Users</h3>
                         <!-- Users will be listed here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Panel Section -->
+            <div class="admin-section" id="admin-section">
+                <h2>Admin Panel</h2>
+                <p>Administrative functions and data management</p>
+                
+                <div class="admin-panel">
+                    <div class="admin-controls">
+                        <button class="btn btn-primary" id="backup-data-btn">
+                            <i class="fas fa-download"></i> Backup All Data
+                        </button>
+                        <button class="btn btn-warning" id="restore-data-btn">
+                            <i class="fas fa-upload"></i> Restore Data
+                        </button>
+                        <button class="btn btn-success" id="export-all-invoices-btn">
+                            <i class="fas fa-file-pdf"></i> Export All Invoices
+                        </button>
+                        <button class="btn btn-info" id="view-all-data-btn">
+                            <i class="fas fa-database"></i> View All Data
+                        </button>
+                    </div>
+                    
+                    <div class="admin-data-view" id="admin-data-view">
+                        <p>Select an action to view data here.</p>
                     </div>
                 </div>
             </div>
@@ -2313,7 +2425,7 @@
                     // Owner login
                     currentUser = 'owner';
                     currentUserRole = 'owner';
-                    currentUserPermissions = ['dashboard', 'trip', 'form', 'pos', 'island', 'product', 'payment', 'user'];
+                    currentUserPermissions = ['dashboard', 'trip', 'form', 'pos', 'island', 'product', 'payment', 'user', 'admin'];
                     localStorage.setItem('boatSystemUser', JSON.stringify({
                         username: 'owner', 
                         role: 'owner',
@@ -2459,6 +2571,8 @@
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('current-user').textContent = currentUser;
                 document.getElementById('user-role').textContent = currentUserRole;
+                document.getElementById('sidebar-user-name').textContent = currentUser;
+                document.getElementById('sidebar-user-role').textContent = currentUserRole;
                 
                 // Apply user permissions
                 applyUserPermissions();
@@ -2501,14 +2615,17 @@
                     'island': document.querySelector('[data-tab="island"]'),
                     'product': document.querySelector('[data-tab="product"]'),
                     'payment': document.querySelector('[data-tab="payment"]'),
-                    'user': document.getElementById('user-tab')
+                    'user': document.getElementById('user-tab'),
+                    'admin': document.getElementById('admin-main-tab')
                 };
                 
                 // Show/hide user management tab based on role
                 if (currentUserRole === 'owner' || currentUserRole === 'admin') {
                     document.getElementById('user-management-tab').style.display = 'block';
+                    document.getElementById('admin-tab').style.display = 'block';
                 } else {
                     document.getElementById('user-management-tab').style.display = 'none';
+                    document.getElementById('admin-tab').style.display = 'none';
                 }
                 
                 // Apply permissions to tabs
@@ -2524,7 +2641,7 @@
                 const activeTab = document.querySelector('.tab.active');
                 if (activeTab && activeTab.style.display === 'none') {
                     activeTab.classList.remove('active');
-                    document.querySelector('[data-tab="dashboard"]').class.classList.add('active');
+                    document.querySelector('[data-tab="dashboard"]').classList.add('active');
                     document.getElementById('dashboard-section').classList.add('active');
                     
                     // Hide all other sections
@@ -2664,6 +2781,7 @@
             const productSection = document.getElementById('product-section');
             const paymentSection = document.getElementById('payment-section');
             const userSection = document.getElementById('user-section');
+            const adminSection = document.getElementById('admin-section');
             
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -2688,6 +2806,7 @@
                     productSection.classList.remove('active');
                     paymentSection.classList.remove('active');
                     userSection.classList.remove('active');
+                    adminSection.classList.remove('active');
                     
                     if (this.dataset.tab === 'dashboard') {
                         dashboardSection.classList.add('active');
@@ -2713,6 +2832,8 @@
                     } else if (this.dataset.tab === 'user') {
                         userSection.classList.add('active');
                         loadSystemUsers();
+                    } else if (this.dataset.tab === 'admin') {
+                        adminSection.classList.add('active');
                     }
                     
                     // Close sidebar on mobile after selection
@@ -3024,6 +3145,19 @@
                 exportPaymentsToCSV();
             });
             
+            // Admin panel functionality
+            document.getElementById('backup-data-btn').addEventListener('click', function() {
+                backupAllData();
+            });
+            
+            document.getElementById('export-all-invoices-btn').addEventListener('click', function() {
+                exportAllInvoices();
+            });
+            
+            document.getElementById('view-all-data-btn').addEventListener('click', function() {
+                viewAllData();
+            });
+            
             // Initialize with today's date
             document.getElementById('product-date').valueAsDate = new Date();
             document.getElementById('trip-date').valueAsDate = new Date();
@@ -3089,6 +3223,9 @@
                 // Get customers from this island
                 getCustomers((customers) => {
                     const islandCustomers = customers.filter(customer => customer.island === islandName);
+                    
+                    // Update customer count
+                    document.getElementById('island-customer-count').textContent = islandCustomers.length;
                     
                     if (islandCustomers.length === 0) {
                         islandCustomersList.innerHTML = '<p>No customers found for this island.</p>';
@@ -3544,7 +3681,7 @@
                         row.classList.add('paid-row');
                     }
                     
-                   // Add payment method class for styling
+                    // Add payment method class for styling
                     const paymentMethodClass = `payment-method-${product.paymentMethod}`;
                     
                     row.innerHTML = `
@@ -3567,12 +3704,6 @@
                     `;
                     tableBody.appendChild(row);
                     
-                    // Add event listener to remove button
-                    row.querySelector('.remove-product').addEventListener('click', function() {
-                        const index = parseInt(this.dataset.index);
-                        customerProducts.splice(index, 1);
-                        updateProductsTable();
-                    });
                     
                     // Add event listener to edit button
                     row.querySelector('.edit-product').addEventListener('click', function() {
@@ -4237,6 +4368,203 @@
                 });
             }
             
+            // Admin panel functions
+            function backupAllData() {
+                // Get all data from Firebase
+                Promise.all([
+                    database.ref('customers').once('value'),
+                    database.ref('orders').once('value'),
+                    database.ref('trips').once('value'),
+                    database.ref('productsWithFees').once('value'),
+                    database.ref('islands').once('value'),
+                    database.ref('users').once('value')
+                ]).then(([customers, orders, trips, products, islands, users]) => {
+                    const allData = {
+                        customers: customers.val(),
+                        orders: orders.val(),
+                        trips: trips.val(),
+                        products: products.val(),
+                        islands: islands.val(),
+                        users: users.val(),
+                        backupDate: new Date().toISOString()
+                    };
+                    
+                    // Create a JSON file for download
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allData, null, 2));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", "boat_system_backup_" + new Date().toISOString().slice(0, 10) + ".json");
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                    
+                    alert('Backup completed successfully!');
+                });
+            }
+            
+            function exportAllInvoices() {
+                getOrders((orders) => {
+                    getCustomers((customers) => {
+                        if (orders.length === 0) {
+                            alert('No invoices found to export.');
+                            return;
+                        }
+                        
+                        const doc = new jsPDF();
+                        let currentPage = 1;
+                        let yPosition = 20;
+                        
+                        orders.forEach((order, index) => {
+                            if (index > 0) {
+                                doc.addPage();
+                                currentPage++;
+                                yPosition = 20;
+                            }
+                            
+                            const customer = customers.find(c => c.id == order.customerId);
+                            const orderDate = new Date(order.date).toLocaleDateString();
+                            
+                            // Add invoice header
+                            doc.setFontSize(16);
+                            doc.setTextColor(26, 42, 108);
+                            doc.text('INVOICE', 105, yPosition, { align: 'center' });
+                            yPosition += 10;
+                            
+                            doc.setFontSize(12);
+                            doc.setTextColor(0, 0, 0);
+                            doc.text(`Customer: ${customer ? customer.name : 'Unknown'}`, 20, yPosition);
+                            doc.text(`Date: ${orderDate}`, 180, yPosition, { align: 'right' });
+                            yPosition += 10;
+                            
+                            doc.text(`Island: ${customer ? customer.island : 'Unknown'}`, 20, yPosition);
+                            doc.text(`Invoice ID: ${order.id}`, 180, yPosition, { align: 'right' });
+                            yPosition += 10;
+                            
+                            // Add products table
+                            const tableColumn = ["Product", "Qty", "Unit", "Boat Fee", "Subtotal"];
+                            const tableRows = [];
+                            
+                            order.products.forEach(product => {
+                                tableRows.push([
+                                    product.productName,
+                                    product.qty,
+                                    product.unit,
+                                    `RF ${product.boatFeeAmount}`,
+                                    `RF ${product.subtotal}`
+                                ]);
+                            });
+                            
+                            // Add total row
+                            tableRows.push([
+                                'TOTAL',
+                                '',
+                                '',
+                                '',
+                                `RF ${order.totalAmount}`
+                            ]);
+                            
+                            // Generate the table
+                            doc.autoTable({
+                                head: [tableColumn],
+                                body: tableRows,
+                                startY: yPosition,
+                                theme: 'grid',
+                                headStyles: {
+                                    fillColor: [26, 42, 108],
+                                    textColor: [255, 255, 255]
+                                },
+                                foot: [['TOTAL', '', '', '', `RF ${order.totalAmount}`]],
+                                footStyles: {
+                                    fillColor: [253, 187, 45],
+                                    textColor: [0, 0, 0]
+                                }
+                            });
+                            
+                            yPosition = doc.lastAutoTable.finalY + 15;
+                            
+                            // Add page number
+                            doc.setFontSize(10);
+                            doc.setTextColor(100, 100, 100);
+                            doc.text(`Page ${currentPage}`, 105, 280, { align: 'center' });
+                        });
+                        
+                        // Save the PDF
+                        doc.save(`All_Invoices_${new Date().toISOString().slice(0, 10)}.pdf`);
+                    });
+                });
+            }
+            
+            function viewAllData() {
+                const dataView = document.getElementById('admin-data-view');
+                dataView.innerHTML = '<p>Loading data...</p>';
+                
+                // Get all data from Firebase
+                Promise.all([
+                    database.ref('customers').once('value'),
+                    database.ref('orders').once('value'),
+                    database.ref('trips').once('value'),
+                    database.ref('productsWithFees').once('value'),
+                    database.ref('islands').once('value')
+                ]).then(([customers, orders, trips, products, islands]) => {
+                    let html = `
+                        <h3>System Data Overview</h3>
+                        <div class="dashboard-cards">
+                            <div class="dashboard-card">
+                                <h3>Customers</h3>
+                                <div class="value">${customers.numChildren()}</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <h3>Orders</h3>
+                                <div class="value">${orders.numChildren()}</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <h3>Trips</h3>
+                                <div class="value">${trips.numChildren()}</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <h3>Products</h3>
+                                <div class="value">${products.numChildren()}</div>
+                            </div>
+                            <div class="dashboard-card">
+                                <h3>Islands</h3>
+                                <div class="value">${islands.val() ? islands.val().length : 0}</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Recent Orders</h3>
+                    `;
+                    
+                    // Show recent orders
+                    const ordersData = orders.val();
+                    if (ordersData) {
+                        html += '<table class="customer-table"><thead><tr><th>ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+                        
+                        // Get last 10 orders
+                        const orderKeys = Object.keys(ordersData).slice(-10);
+                        orderKeys.reverse().forEach(key => {
+                            const order = ordersData[key];
+                            const customer = customers.val() ? customers.val()[order.customerId] : null;
+                            
+                            html += `
+                                <tr>
+                                    <td>${order.id}</td>
+                                    <td>${customer ? customer.name : 'Unknown'}</td>
+                                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                                    <td>RF ${order.totalAmount}</td>
+                                    <td>${order.paymentStatus}</td>
+                                </tr>
+                            `;
+                        });
+                        
+                        html += '</tbody></table>';
+                    } else {
+                        html += '<p>No orders found.</p>';
+                    }
+                    
+                    dataView.innerHTML = html;
+                });
+            }
+            
             // Update dashboard with statistics
             function updateDashboard() {
                 const startDate = document.getElementById('start-date').value;
@@ -4444,7 +4772,7 @@
                             ],
                             backgroundColor: [
                                 'rgba(40, 167, 69, 0.7)',
-                                'rgba(23, 162, 184, 0.7)',
+                                                               'rgba(23, 162, 184, 0.7)',
                                 'rgba(255, 193, 7, 0.7)',
                                 'rgba(220, 53, 69, 0.7)'
                             ],
