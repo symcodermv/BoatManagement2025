@@ -10,27 +10,164 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <!-- Firebase Database -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     
     <!-- jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-           /* Custom font for Dhivehi */
+        /* Custom font for Dhivehi */
         @font-face {
             font-family: 'Faruma';
             src: url('fonts/Faruma.ttf');
-
-    
         }
-
-
-
 
         /* Custom font for the header */
         @font-face {
             font-family: 'SameeAvasThaana';
             src: url('fonts/Samee_Avas_Thaana.ttf');
+        }
+        
+        /* Login Screen Styles */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-logo {
+            margin-bottom: 20px;
+        }
+        
+        .login-logo i {
+            font-size: 3rem;
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        .login-logo h1 {
+            font-size: 2rem;
+            color: #1a2a6c;
+            font-family: 'SameeAvasThaana', sans-serif;
+        }
+        
+        .login-form {
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #1a2a6c;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #2a3b7c;
+        }
+        
+        .user-management {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .user-list {
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* Full screen button */
+        .fullscreen-btn {
+            position: absolute;
+            left: 70px;
+            top: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .fullscreen-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Exit Full Screen Button */
+        .exit-fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+        
+        body.fullscreen-mode .exit-fullscreen-btn {
+            display: block;
         }
         
         /* Splash Screen Styles */
@@ -45,7 +182,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 9998;
             transition: opacity 0.5s ease-out;
         }
         
@@ -199,11 +336,11 @@
             padding: 15px;
         }
         
-        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .trip-section {
+        .form-section, .pos-section, .island-section, .payment-section, .product-section, .dashboard-section, .trip-section, .user-section {
             display: none;
         }
         
-        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .trip-section.active {
+        .form-section.active, .pos-section.active, .island-section.active, .payment-section.active, .product-section.active, .dashboard-section.active, .trip-section.active, .user-section.active {
             display: block;
         }
         
@@ -371,6 +508,7 @@
         .payment-status label {
             margin-right: 10px;
             margin-bottom: 5px;
+            font-family: 'Faruma';
         }
         
         .payment-status input {
@@ -1029,6 +1167,47 @@
             margin-left: 10px;
         }
         
+        /* User Management Styles */
+        .user-management {
+            background: #f5f7ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .user-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .user-form input {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .user-list {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        
         /* Mobile invoice styles */
         @media (max-width: 767px) {
             .invoice-products th:nth-child(4),
@@ -1086,6 +1265,12 @@
             .product-fee-input {
                 max-width: 100%;
             }
+            
+            .fullscreen-btn {
+                left: 60px;
+                top: 12px;
+                font-size: 1rem;
+            }
         }
         
         /* Print styles for invoice */
@@ -1133,7 +1318,6 @@
             
             .tab {
                 font-size: 14px;
-                padding: 12px 15px;
             }
             
             .content {
@@ -1274,9 +1458,216 @@
         .payment-method-card {
             color: #ffc107;
         }
+        
+        /* Full screen mode styles */
+        body.fullscreen-mode {
+            padding: 0;
+            background: white;
+        }
+        
+        body.fullscreen-mode .container {
+            border-radius: 0;
+            height: 100vh;
+            overflow: auto;
+        }
+        
+        /* Access Control Styles */
+        .access-control {
+            margin-top: 20px;
+            background: #f5f7ff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .access-control h3 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .permissions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .permission-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .permission-item input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .permission-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        /* Enhanced PDF Export Styles */
+        .pdf-export-options {
+            background: #f5f7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .export-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .export-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .export-option input {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        .export-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* User Profile Styles */
+        .user-profile {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+        
+        .user-profile .user-info {
+            margin-right: 10px;
+            text-align: right;
+        }
+        
+        .user-profile .user-name {
+            font-weight: bold;
+        }
+        
+        .user-profile .user-role {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 5px 50px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
     </style>
 </head>
 <body>
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-ship"></i>
+                <h1>qTOb amAyin</h1>
+                <p>Boat Trip Management System</p>
+            </div>
+            
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                
+                <button class="login-btn" id="login-btn">Login</button>
+                
+                <div id="login-message" style="color: red; margin-top: 10px; text-align: center;"></div>
+            </div>
+            
+            <!-- Owner-only user management section -->
+            <div class="user-management" id="owner-user-management" style="display: none;">
+                <h3>User Management (Owner Only)</h3>
+                
+                <div class="user-form">
+                    <input type="text" id="new-username" placeholder="New username">
+                    <input type="password" id="new-password" placeholder="New password">
+                    <select id="new-user-role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button class="btn btn-primary" id="add-user-btn">Add User</button>
+                </div>
+                
+                <div class="access-control">
+                    <h3>Access Permissions</h3>
+                    <div class="permissions-grid">
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-dashboard" class="perm-checkbox" data-perm="dashboard" checked>
+                            <label for="perm-dashboard">Dashboard</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-trip" class="perm-checkbox" data-perm="trip" checked>
+                            <label for="perm-trip">Trip Management</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-form" class="perm-checkbox" data-perm="form" checked>
+                            <label for="perm-form">Entry Form</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-pos" class="perm-checkbox" data-perm="pos" checked>
+                            <label for="perm-pos">POS System</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-island" class="perm-checkbox" data-perm="island" checked>
+                            <label for="perm-island">Island Management</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-product" class="perm-checkbox" data-perm="product" checked>
+                            <label for="perm-product">Product Management</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-payment" class="perm-checkbox" data-perm="payment" checked>
+                            <label for="perm-payment">Payment Management</label>
+                        </div>
+                        <div class="permission-item">
+                            <input type="checkbox" id="perm-user" class="perm-checkbox" data-perm="user">
+                            <label for="perm-user">User Management</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="user-list" id="user-list">
+                    <h3>System Users</h3>
+                    <!-- Users will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-logo">
@@ -1289,6 +1680,11 @@
         </div>
     </div>
     
+    <!-- Exit Full Screen Button -->
+    <button class="exit-fullscreen-btn" id="exit-fullscreen-btn">
+        <i class="fas fa-compress"></i>
+    </button>
+    
     <!-- Mobile Sidebar -->
     <div class="overlay" id="overlay"></div>
     <div class="sidebar" id="sidebar">
@@ -1299,6 +1695,10 @@
         <div class="tab" data-tab="island">Island Management</div>
         <div class="tab" data-tab="product">Product Management</div>
         <div class="tab" data-tab="payment">Payment Management</div>
+        <div class="tab" data-tab="user" id="user-management-tab" style="display: none;">User Management</div>
+        <div class="tab" id="logout-btn" style="color: #ff6b6b;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </div>
     </div>
     
     <!-- Main App Container -->
@@ -1307,11 +1707,29 @@
             <button class="menu-toggle" id="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
+            
+            <!-- Full screen button moved to left side -->
+            <button class="fullscreen-btn" id="fullscreen-btn">
+                <i class="fas fa-expand"></i>
+            </button>
+        
             <div class="logo">
                 <i class="fas fa-ship"></i>
                 <h1>qTOb amAyin</h1>
             </div>
+            
             <p>Manage your boat trips, customers, and invoices in one place</p>
+            
+            <!-- User Profile and Logout -->
+            <div class="user-profile" id="user-profile">
+                <div class="user-info">
+                    <div class="user-name" id="current-user"></div>
+                    <div class="user-role" id="user-role"></div>
+                </div>
+                <button class="logout-btn" id="header-logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
         </header>
         
         <div class="tabs">
@@ -1322,6 +1740,7 @@
             <div class="tab" data-tab="island">Island Management</div>
             <div class="tab" data-tab="product">Product Management</div>
             <div class="tab" data-tab="payment">Payment Management</div>
+            <div class="tab" data-tab="user" id="user-tab" style="display: none;">User Management</div>
         </div>
         
         <div class="content">
@@ -1452,6 +1871,11 @@
                         <option value="">Select an island</option>
                         <!-- Islands will be loaded from Firebase -->
                     </select>
+                </div>
+                
+                <!-- Island Total Value Display -->
+                <div class="island-total" id="island-total-value" style="margin-top: 15px; display: none;">
+                    <h3>Island Total Value: <span id="island-total-amount">RF 0</span></h3>
                 </div>
                 
                 <!-- Quick Customer Registration Button -->
@@ -1688,6 +2112,41 @@
                 <h2>Payment Management</h2>
                 <p>View and manage payments for your boat trips</p>
                 
+                <!-- Enhanced PDF Export Options -->
+                <div class="pdf-export-options">
+                    <h3>Export Payment Reports</h3>
+                    <div class="export-options-grid">
+                        <div class="export-option">
+                            <input type="checkbox" id="export-all" checked>
+                            <label for="export-all">All Payments</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="checkbox" id="export-paid">
+                            <label for="export-paid">Paid Only</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="checkbox" id="export-unpaid">
+                            <label for="export-unpaid">Unpaid Only</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="checkbox" id="export-summary" checked>
+                            <label for="export-summary">Include Summary</label>
+                        </div>
+                        <div class="export-option">
+                            <input type="checkbox" id="export-details" checked>
+                            <label for="export-details">Include Details</label>
+                        </div>
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn-primary" id="export-pdf-btn">
+                            <i class="fas fa-file-pdf"></i> Export to PDF
+                        </button>
+                        <button class="btn btn-success" id="export-csv-btn">
+                            <i class="fas fa-file-csv"></i> Export to CSV
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="payment-filters">
                     <div class="payment-filter active" data-filter="all">All Payments</div>
                     <div class="payment-filter" data-filter="paid">Paid</div>
@@ -1700,6 +2159,67 @@
                 
                 <div class="total-trips-value" id="payment-total">
                     Total Value: RF 0
+                </div>
+            </div>
+            
+            <!-- User Management Section -->
+            <div class="user-section" id="user-section">
+                <h2>User Management</h2>
+                <p>Manage system users and permissions</p>
+                
+                <div class="user-management">
+                    <div class="user-form">
+                        <input type="text" id="new-system-username" placeholder="New username">
+                        <input type="password" id="new-system-password" placeholder="New password">
+                        <select id="new-system-user-role">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button class="btn btn-primary" id="add-system-user-btn">Add User</button>
+                    </div>
+                    
+                    <div class="access-control">
+                        <h3>Access Permissions</h3>
+                        <div class="permissions-grid">
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-dashboard" class="system-perm-checkbox" data-perm="dashboard" checked>
+                                <label for="system-perm-dashboard">Dashboard</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-trip" class="system-perm-checkbox" data-perm="trip" checked>
+                                <label for="system-perm-trip">Trip Management</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-form" class="system-perm-checkbox" data-perm="form" checked>
+                                <label for="system-perm-form">Entry Form</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-pos" class="system-perm-checkbox" data-perm="pos" checked>
+                                <label for="system-perm-pos">POS System</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-island" class="system-perm-checkbox" data-perm="island" checked>
+                                <label for="system-perm-island">Island Management</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-product" class="system-perm-checkbox" data-perm="product" checked>
+                                <label for="system-perm-product">Product Management</label>
+                            </div>
+                            <div class="permission-item">
+                                                                <input type="checkbox" id="system-perm-payment" class="system-perm-checkbox" data-perm="payment" checked>
+                                <label for="system-perm-payment">Payment Management</label>
+                            </div>
+                            <div class="permission-item">
+                                <input type="checkbox" id="system-perm-user" class="system-perm-checkbox" data-perm="user">
+                                <label for="system-perm-user">User Management</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-list" id="system-user-list">
+                        <h3>System Users</h3>
+                        <!-- Users will be listed here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1727,6 +2247,7 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const auth = firebase.auth();
 
         // Global variables
         let currentCustomerId = null;
@@ -1737,6 +2258,9 @@
         let paymentMethodsChart = null;
         let currentOrderId = null;
         let currentTrip = null;
+        let currentUser = null;
+        let currentUserRole = null;
+        let currentUserPermissions = [];
 
         // Bank details for invoices
         const bankDetails = {
@@ -1748,35 +2272,372 @@
             branch: "Male' Branch"
         };
 
-       // Base64 encoded Island Rihaakuru seal image
+        // Base64 encoded Island Rihaakuru seal image
         const islandSealBase64 = "Island Rihaakuru.png";
         
+        // Owner password
+        const OWNER_PASSWORD = "NIYAAMA2025";
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Show splash screen first
-            const splashScreen = document.getElementById('splash-screen');
-            const progressBar = document.getElementById('splash-progress');
-            const container = document.querySelector('.container');
-            
-            // Simulate loading progress
-            let progress = 0;
-            const progressInterval = setInterval(() => {
-                progress += 5;
-                progressBar.style.width = `${progress}%`;
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('boatSystemUser');
+            if (savedUser) {
+                const userData = JSON.parse(savedUser);
+                currentUser = userData.username;
+                currentUserRole = userData.role;
+                currentUserPermissions = userData.permissions || [];
+                showMainApp();
+            } else {
+                // Show login screen
+                document.getElementById('login-screen').style.display = 'flex';
                 
-                if (progress >= 100) {
-                    clearInterval(progressInterval);
-                    // Hide splash screen and show main app
-                    splashScreen.style.opacity = '0';
-                    setTimeout(() => {
-                        splashScreen.style.display = 'none';
-                        container.style.opacity = '1';
-                        container.style.transform = 'translateY(0)';
-                        
-                        // Initialize data after splash screen
-                        initializeData();
-                    }, 500);
+                // Check if owner is trying to access user management
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('admin') === 'true') {
+                    document.getElementById('owner-user-management').style.display = 'block';
                 }
-            }, 100);
+            }
+            
+            // Login functionality
+            document.getElementById('login-btn').addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    document.getElementById('login-message').textContent = 'Please enter both username and password';
+                    return;
+                }
+                
+                // Check if this is the owner login
+                if (password === OWNER_PASSWORD && username === 'owner') {
+                    // Owner login
+                    currentUser = 'owner';
+                    currentUserRole = 'owner';
+                    currentUserPermissions = ['dashboard', 'trip', 'form', 'pos', 'island', 'product', 'payment', 'user'];
+                    localStorage.setItem('boatSystemUser', JSON.stringify({
+                        username: 'owner', 
+                        role: 'owner',
+                        permissions: currentUserPermissions
+                    }));
+                    showMainApp();
+                    return;
+                }
+                
+                // Regular user login
+                database.ref('users').orderByChild('username').equalTo(username).once('value')
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        const userData = Object.values(snapshot.val())[0];
+                        if (userData.password === password) {
+                            currentUser = username;
+                            currentUserRole = userData.role;
+                            currentUserPermissions = userData.permissions || [];
+                            localStorage.setItem('boatSystemUser', JSON.stringify({
+                                username, 
+                                role: userData.role,
+                                permissions: currentUserPermissions
+                            }));
+                            showMainApp();
+                        } else {
+                            document.getElementById('login-message').textContent = 'Invalid password';
+                        }
+                    } else {
+                        document.getElementById('login-message').textContent = 'User not found';
+                    }
+                });
+            });
+            
+            // Add user functionality (owner only)
+            document.getElementById('add-user-btn').addEventListener('click', function() {
+                const username = document.getElementById('new-username').value;
+                const password = document.getElementById('new-password').value;
+                const role = document.getElementById('new-user-role').value;
+                
+                if (!username || !password) {
+                    alert('Please enter both username and password');
+                    return;
+                }
+                
+                // Get selected permissions
+                const permissions = [];
+                document.querySelectorAll('.perm-checkbox:checked').forEach(checkbox => {
+                    permissions.push(checkbox.dataset.perm);
+                });
+                
+                // Add user to Firebase
+                database.ref('users').push({
+                    username: username,
+                    password: password,
+                    role: role,
+                    permissions: permissions,
+                    created: new Date().toISOString()
+                }).then(() => {
+                    alert('User added successfully');
+                    document.getElementById('new-username').value = '';
+                    document.getElementById('new-password').value = '';
+                    loadUsers();
+                });
+            });
+            
+            // Add system user functionality (from user management tab)
+            document.getElementById('add-system-user-btn').addEventListener('click', function() {
+                const username = document.getElementById('new-system-username').value;
+                const password = document.getElementById('new-system-password').value;
+                const role = document.getElementById('new-system-user-role').value;
+                
+                if (!username || !password) {
+                    alert('Please enter both username and password');
+                    return;
+                }
+                
+                // Get selected permissions
+                const permissions = [];
+                document.querySelectorAll('.system-perm-checkbox:checked').forEach(checkbox => {
+                    permissions.push(checkbox.dataset.perm);
+                });
+                
+                // Add user to Firebase
+                database.ref('users').push({
+                    username: username,
+                    password: password,
+                    role: role,
+                    permissions: permissions,
+                    created: new Date().toISOString()
+                }).then(() => {
+                    alert('User added successfully');
+                    document.getElementById('new-system-username').value = '';
+                    document.getElementById('new-system-password').value = '';
+                    loadSystemUsers();
+                });
+            });
+            
+           // Full screen functionality
+            document.getElementById('fullscreen-btn').addEventListener('click', function() {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+                
+                document.body.classList.add('fullscreen-mode');
+            });
+            
+            document.getElementById('exit-fullscreen-btn').addEventListener('click', function() {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+                
+                document.body.classList.remove('fullscreen-mode');
+            });
+            
+            // Logout functionality
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                logout();
+            });
+            
+            document.getElementById('header-logout-btn').addEventListener('click', function() {
+                logout();
+            });
+            
+            function logout() {
+                localStorage.removeItem('boatSystemUser');
+                currentUser = null;
+                currentUserRole = null;
+                currentUserPermissions = [];
+                document.getElementById('login-screen').style.display = 'flex';
+                document.querySelector('.container').style.display = 'none';
+            }
+            
+            function showMainApp() {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('current-user').textContent = currentUser;
+                document.getElementById('user-role').textContent = currentUserRole;
+                
+                // Apply user permissions
+                applyUserPermissions();
+                
+                // Show splash screen first
+                const splashScreen = document.getElementById('splash-screen');
+                const progressBar = document.getElementById('splash-progress');
+                const container = document.querySelector('.container');
+                
+                // Simulate loading progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += 5;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                        // Hide splash screen and show main app
+                        splashScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            splashScreen.style.display = 'none';
+                            container.style.opacity = '1';
+                            container.style.transform = 'translateY(0)';
+                            container.style.display = 'block';
+                            
+                            // Initialize data after splash screen
+                            initializeData();
+                        }, 500);
+                    }
+                }, 100);
+            }
+            
+            function applyUserPermissions() {
+                // Show/hide tabs based on permissions
+                const tabs = {
+                    'dashboard': document.querySelector('[data-tab="dashboard"]'),
+                    'trip': document.querySelector('[data-tab="trip"]'),
+                    'form': document.querySelector('[data-tab="form"]'),
+                    'pos': document.querySelector('[data-tab="pos"]'),
+                    'island': document.querySelector('[data-tab="island"]'),
+                    'product': document.querySelector('[data-tab="product"]'),
+                    'payment': document.querySelector('[data-tab="payment"]'),
+                    'user': document.getElementById('user-tab')
+                };
+                
+                // Show/hide user management tab based on role
+                if (currentUserRole === 'owner' || currentUserRole === 'admin') {
+                    document.getElementById('user-management-tab').style.display = 'block';
+                } else {
+                    document.getElementById('user-management-tab').style.display = 'none';
+                }
+                
+                // Apply permissions to tabs
+                Object.keys(tabs).forEach(tab => {
+                    if (currentUserPermissions.includes(tab)) {
+                        tabs[tab].style.display = 'flex';
+                    } else {
+                        tabs[tab].style.display = 'none';
+                    }
+                });
+                
+                // If current active tab is hidden, switch to dashboard
+                const activeTab = document.querySelector('.tab.active');
+                if (activeTab && activeTab.style.display === 'none') {
+                    activeTab.classList.remove('active');
+                    document.querySelector('[data-tab="dashboard"]').class.classList.add('active');
+                    document.getElementById('dashboard-section').classList.add('active');
+                    
+                    // Hide all other sections
+                    document.querySelectorAll('.content > div').forEach(section => {
+                        if (section.id !== 'dashboard-section') {
+                            section.classList.remove('active');
+                        }
+                    });
+                }
+            }
+            
+            function loadUsers() {
+                const userList = document.getElementById('user-list');
+                userList.innerHTML = '';
+                
+                database.ref('users').once('value').then(snapshot => {
+                    const users = snapshot.val();
+                    if (!users) return;
+                    
+                    Object.keys(users).forEach(key => {
+                        const user = users[key];
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-item';
+                        userItem.innerHTML = `
+                            <div>${user.username} (${user.role})</div>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning btn-sm edit-user" data-key="${key}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-user" data-key="${key}">Delete</button>
+                            </div>
+                        `;
+                        userList.appendChild(userItem);
+                        
+                        userItem.querySelector('.delete-user').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete user ${user.username}?`)) {
+                                database.ref('users/' + key).remove().then(() => {
+                                    loadUsers();
+                                });
+                            }
+                        });
+                        
+                        userItem.querySelector('.edit-user').addEventListener('click', function() {
+                            // Populate form with user data
+                            document.getElementById('new-username').value = user.username;
+                            document.getElementById('new-password').value = user.password;
+                            document.getElementById('new-user-role').value = user.role;
+                            
+                            // Set permissions
+                            document.querySelectorAll('.perm-checkbox').forEach(checkbox => {
+                                checkbox.checked = user.permissions && user.permissions.includes(checkbox.dataset.perm);
+                            });
+                            
+                            // Change add button to update button
+                            const addBtn = document.getElementById('add-user-btn');
+                            addBtn.textContent = 'Update User';
+                            addBtn.dataset.mode = 'edit';
+                            addBtn.dataset.key = key;
+                        });
+                    });
+                });
+            }
+            
+            function loadSystemUsers() {
+                const userList = document.getElementById('system-user-list');
+                userList.innerHTML = '';
+                
+                database.ref('users').once('value').then(snapshot => {
+                    const users = snapshot.val();
+                    if (!users) {
+                        userList.innerHTML = '<p>No users found</p>';
+                        return;
+                    }
+                    
+                    Object.keys(users).forEach(key => {
+                        const user = users[key];
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-item';
+                        userItem.innerHTML = `
+                            <div>${user.username} (${user.role})</div>
+                            <div class="action-buttons">
+                                <button class="btn btn-warning btn-sm edit-system-user" data-key="${key}">Edit</button>
+                                <button class="btn btn-danger btn-sm delete-system-user" data-key="${key}">Delete</button>
+                            </div>
+                        `;
+                        userList.appendChild(userItem);
+                        
+                        userItem.querySelector('.delete-system-user').addEventListener('click', function() {
+                            if (confirm(`Are you sure you want to delete user ${user.username}?`)) {
+                                database.ref('users/' + key).remove().then(() => {
+                                    loadSystemUsers();
+                                });
+                            }
+                        });
+                        
+                        userItem.querySelector('.edit-system-user').addEventListener('click', function() {
+                            // Populate form with user data
+                            document.getElementById('new-system-username').value = user.username;
+                            document.getElementById('new-system-password').value = user.password;
+                            document.getElementById('new-system-user-role').value = user.role;
+                            
+                            // Set permissions
+                            document.querySelectorAll('.system-perm-checkbox').forEach(checkbox => {
+                                checkbox.checked = user.permissions && user.permissions.includes(checkbox.dataset.perm);
+                            });
+                            
+                            // Change add button to update button
+                            const addBtn = document.getElementById('add-system-user-btn');
+                            addBtn.textContent = 'Update User';
+                            addBtn.dataset.mode = 'edit';
+                            addBtn.dataset.key = key;
+                        });
+                    });
+                });
+            }
             
             // Mobile sidebar functionality
             const menuToggle = document.getElementById('menu-toggle');
@@ -1802,9 +2663,20 @@
             const islandSection = document.getElementById('island-section');
             const productSection = document.getElementById('product-section');
             const paymentSection = document.getElementById('payment-section');
+            const userSection = document.getElementById('user-section');
             
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
+                    // Skip logout button
+                    if (this.id === 'logout-btn') return;
+                    
+                    // Check if user has permission for this tab
+                    const tabName = this.dataset.tab;
+                    if (!currentUserPermissions.includes(tabName)) {
+                        alert('You do not have permission to access this section');
+                        return;
+                    }
+                    
                     tabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
                     
@@ -1815,6 +2687,7 @@
                     islandSection.classList.remove('active');
                     productSection.classList.remove('active');
                     paymentSection.classList.remove('active');
+                    userSection.classList.remove('active');
                     
                     if (this.dataset.tab === 'dashboard') {
                         dashboardSection.classList.add('active');
@@ -1837,6 +2710,9 @@
                     } else if (this.dataset.tab === 'payment') {
                         paymentSection.classList.add('active');
                         loadPayments('all');
+                    } else if (this.dataset.tab === 'user') {
+                        userSection.classList.add('active');
+                        loadSystemUsers();
                     }
                     
                     // Close sidebar on mobile after selection
@@ -1861,7 +2737,8 @@
                     date: tripDate,
                     number: tripNumber,
                     invoiceId: tripInvoiceId,
-                    createdAt: new Date().toISOString()
+                    createdAt: new Date().toISOString(),
+                    createdBy: currentUser
                 };
                 
                 saveTrip(trip);
@@ -1881,9 +2758,12 @@
                 if (currentIsland) {
                     document.getElementById('island-customers').style.display = 'block';
                     document.getElementById('selected-island-name').textContent = currentIsland;
+                    document.getElementById('island-total-value').style.display = 'block';
                     loadIslandCustomers(currentIsland);
+                    calculateIslandTotalValue(currentIsland);
                 } else {
                     document.getElementById('island-customers').style.display = 'none';
+                    document.getElementById('island-total-value').style.display = 'none';
                 }
             });
             
@@ -1897,6 +2777,7 @@
                 // Show customer registration form
                 document.getElementById('customer-registration').style.display = 'block';
                 document.getElementById('island-customers').style.display = 'none';
+                document.getElementById('island-total-value').style.display = 'none';
             });
             
             // Date filter functionality
@@ -1945,7 +2826,8 @@
                     name: customerName,
                     contact: contact,
                     address: address,
-                    island: currentIsland
+                    island: currentIsland,
+                    createdBy: currentUser
                 };
                 
                 // Save to Firebase
@@ -2023,7 +2905,8 @@
                     date,
                     time,
                     paymentMethod,
-                    tripId: currentTrip.id
+                    tripId: currentTrip.id,
+                    createdBy: currentUser
                 });
                 
                 // Update the products table
@@ -2065,7 +2948,8 @@
                     paymentStatus: document.getElementById('payment-method').value === 'not-paid' ? 'unpaid' : 'paid',
                     totalAmount: totalAmount,
                     paymentMethod: document.getElementById('payment-method').value,
-                    tripId: currentTrip.id
+                    tripId: currentTrip.id,
+                    createdBy: currentUser
                 };
                 
                 // Save to Firebase
@@ -2078,14 +2962,16 @@
                 document.getElementById('product-details').style.display = 'none';
                 document.getElementById('product-list-table').style.display = 'none';
                 document.getElementById('island-customers').style.display = 'block';
+                document.getElementById('island-total-value').style.display = 'block';
                 
                 // Reset variables
                 currentCustomerId = null;
                 customerProducts = [];
                 currentOrderId = null;
                 
-                // Update island customers list
+                // Update island customers list and total value
                 loadIslandCustomers(currentIsland);
+                calculateIslandTotalValue(currentIsland);
                 
                 alert('Invoice saved successfully!');
             });
@@ -2128,6 +3014,16 @@
                 document.getElementById('customer-orders-modal').style.display = 'none';
             });
             
+            // PDF Export functionality
+            document.getElementById('export-pdf-btn').addEventListener('click', function() {
+                exportPaymentsToPDF();
+            });
+            
+            // CSV Export functionality
+            document.getElementById('export-csv-btn').addEventListener('click', function() {
+                exportPaymentsToCSV();
+            });
+            
             // Initialize with today's date
             document.getElementById('product-date').valueAsDate = new Date();
             document.getElementById('trip-date').valueAsDate = new Date();
@@ -2158,6 +3054,30 @@
                 currentTrip = trip;
                 document.getElementById('current-trip-info').textContent = `Current Trip: ${trip.number} (${trip.date})`;
                 document.getElementById('entry-trip-info').textContent = `Current Trip: ${trip.number} (${trip.date})`;
+            }
+            
+            function calculateIslandTotalValue(islandName) {
+                getOrders((orders) => {
+                    // Filter orders by current trip if selected
+                    let filteredOrders = orders;
+                    if (currentTrip) {
+                        filteredOrders = orders.filter(order => order.tripId == currentTrip.id);
+                    }
+                    
+                    // Get customers from this island
+                    getCustomers((customers) => {
+                        const islandCustomers = customers.filter(customer => customer.island === islandName);
+                        let totalValue = 0;
+                        
+                        islandCustomers.forEach(customer => {
+                            const customerOrders = filteredOrders.filter(order => order.customerId == customer.id);
+                            const customerTotal = customerOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount || 0), 0);
+                            totalValue += customerTotal;
+                        });
+                        
+                        document.getElementById('island-total-amount').textContent = `RF ${totalValue.toFixed(2)}`;
+                    });
+                });
             }
             
             function loadIslandCustomers(islandName) {
@@ -2220,6 +3140,7 @@
                         // Show product entry form
                         document.getElementById('product-details').style.display = 'block';
                         document.getElementById('customer-registration').style.display = 'none';
+                        document.getElementById('island-total-value').style.display = 'none';
                         
                         // Load customer orders to continue adding products
                         getCustomerOrders(customerId, (orders) => {
@@ -2623,7 +3544,7 @@
                         row.classList.add('paid-row');
                     }
                     
-                    // Add payment method class for styling
+                   // Add payment method class for styling
                     const paymentMethodClass = `payment-method-${product.paymentMethod}`;
                     
                     row.innerHTML = `
@@ -2707,7 +3628,7 @@
                             return;
                         }
                         
-                        // Create customer rows
+                         // Create customer rows
                         filteredCustomers.forEach(customer => {
                             // Count orders for this customer
                             const customerOrders = orders.filter(order => order.customerId == customer.id);
@@ -3104,7 +4025,7 @@
                             const paymentItem = document.createElement('div');
                             paymentItem.className = 'payment-item';
                             
-                              // Format date
+                                // Format date
                             const orderDate = new Date(order.date).toLocaleDateString();
                             
                             paymentItem.innerHTML = `
@@ -3118,7 +4039,7 @@
                                     RF ${order.totalAmount}
                                 </div>
                                 <div class="payment-actions">
-                                    <span class="trip-status ${order.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
+                                                                   <span class="trip-status ${order.paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">
                                         ${order.paymentStatus.toUpperCase()}
                                     </span>
                                     <button class="btn btn-primary btn-sm view-payment" data-id="${order.id}">View</button>
@@ -3135,6 +4056,183 @@
                         });
                         
                         paymentTotal.textContent = `Total Value: RF ${totalValue.toFixed(2)}`;
+                    });
+                });
+            }
+            
+            // Export payments to PDF
+            function exportPaymentsToPDF() {
+                const exportAll = document.getElementById('export-all').checked;
+                const exportPaid = document.getElementById('export-paid').checked;
+                const exportUnpaid = document.getElementById('export-unpaid').checked;
+                const exportSummary = document.getElementById('export-summary').checked;
+                const exportDetails = document.getElementById('export-details').checked;
+                
+                // Determine filter based on selection
+                let filter = 'all';
+                if (!exportAll) {
+                    if (exportPaid && !exportUnpaid) filter = 'paid';
+                    if (!exportPaid && exportUnpaid) filter = 'unpaid';
+                    if (exportPaid && exportUnpaid) filter = 'all';
+                }
+                
+                getOrders((orders) => {
+                    getCustomers((customers) => {
+                        // Filter orders based on selection
+                        let filteredOrders = orders;
+                        if (filter !== 'all') {
+                            filteredOrders = orders.filter(order => order.paymentStatus === filter);
+                        }
+                        
+                        if (filteredOrders.length === 0) {
+                            alert('No payments found for the selected criteria.');
+                            return;
+                        }
+                        
+                        const doc = new jsPDF();
+                        
+                        // Add header
+                        doc.setFontSize(20);
+                        doc.setTextColor(26, 42, 108);
+                        doc.text('NIYAAMAA BOAT', 105, 20, { align: 'center' });
+                        doc.setFontSize(16);
+                        doc.text('PAYMENT REPORT', 105, 30, { align: 'center' });
+                        
+                        // Add date range if available
+                        const startDate = document.getElementById('start-date').value;
+                        const endDate = document.getElementById('end-date').value;
+                        
+                        if (startDate && endDate) {
+                            doc.setFontSize(12);
+                            doc.setTextColor(0, 0, 0);
+                            doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 40, { align: 'center' });
+                        }
+                        
+                        let yPosition = 50;
+                        
+                        // Add summary if selected
+                        if (exportSummary) {
+                            doc.setFontSize(14);
+                            doc.setTextColor(26, 42, 108);
+                            doc.text('SUMMARY', 20, yPosition);
+                            yPosition += 10;
+                            
+                            // Calculate totals
+                            const totalAmount = filteredOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount || 0), 0);
+                            const paidOrders = filteredOrders.filter(order => order.paymentStatus === 'paid');
+                            const unpaidOrders = filteredOrders.filter(order => order.paymentStatus === 'unpaid');
+                            const paidAmount = paidOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount || 0), 0);
+                            const unpaidAmount = unpaidOrders.reduce((sum, order) => sum + parseFloat(order.totalAmount || 0), 0);
+                            
+                            doc.setFontSize(12);
+                            doc.setTextColor(0, 0, 0);
+                            doc.text(`Total Orders: ${filteredOrders.length}`, 20, yPosition);
+                            yPosition += 7;
+                            doc.text(`Paid Orders: ${paidOrders.length}`, 20, yPosition);
+                            yPosition += 7;
+                            doc.text(`Unpaid Orders: ${unpaidOrders.length}`, 20, yPosition);
+                            yPosition += 7;
+                            doc.text(`Total Amount: RF ${totalAmount.toFixed(2)}`, 20, yPosition);
+                            yPosition += 7;
+                            doc.text(`Paid Amount: RF ${paidAmount.toFixed(2)}`, 20, yPosition);
+                            yPosition += 7;
+                            doc.text(`Unpaid Amount: RF ${unpaidAmount.toFixed(2)}`, 20, yPosition);
+                            yPosition += 15;
+                        }
+                        
+                        // Add details if selected
+                        if (exportDetails) {
+                            doc.setFontSize(14);
+                            doc.setTextColor(26, 42, 108);
+                            doc.text('DETAILS', 20, yPosition);
+                            yPosition += 10;
+                            
+                            // Create table
+                            const tableColumn = ["Customer", "Island", "Date", "Amount", "Status", "Payment Method"];
+                            const tableRows = [];
+                            
+                            filteredOrders.forEach(order => {
+                                const customer = customers.find(c => c.id == order.customerId);
+                                const orderDate = new Date(order.date).toLocaleDateString();
+                                
+                                tableRows.push([
+                                    customer ? customer.name : 'Unknown',
+                                    customer ? customer.island : 'Unknown',
+                                    orderDate,
+                                    `RF ${order.totalAmount}`,
+                                    order.paymentStatus.toUpperCase(),
+                                    order.paymentMethod
+                                ]);
+                            });
+                            
+                            // Generate the table
+                            doc.autoTable({
+                                head: [tableColumn],
+                                body: tableRows,
+                                startY: yPosition,
+                                theme: 'grid',
+                                headStyles: {
+                                    fillColor: [26, 42, 108],
+                                    textColor: [255, 255, 255]
+                                }
+                            });
+                        }
+                        
+                        // Save the PDF
+                        const dateStr = new Date().toISOString().slice(0, 10);
+                        doc.save(`Payment_Report_${dateStr}.pdf`);
+                    });
+                });
+            }
+            
+            // Export payments to CSV
+            function exportPaymentsToCSV() {
+                const exportAll = document.getElementById('export-all').checked;
+                const exportPaid = document.getElementById('export-paid').checked;
+                const exportUnpaid = document.getElementById('export-unpaid').checked;
+                
+                // Determine filter based on selection
+                let filter = 'all';
+                if (!exportAll) {
+                    if (exportPaid && !exportUnpaid) filter = 'paid';
+                    if (!exportPaid && exportUnpaid) filter = 'unpaid';
+                    if (exportPaid && exportUnpaid) filter = 'all';
+                }
+                
+                getOrders((orders) => {
+                    getCustomers((customers) => {
+                        // Filter orders based on selection
+                        let filteredOrders = orders;
+                        if (filter !== 'all') {
+                            filteredOrders = orders.filter(order => order.paymentStatus === filter);
+                        }
+                        
+                        if (filteredOrders.length === 0) {
+                            alert('No payments found for the selected criteria.');
+                            return;
+                        }
+                        
+                        // Create CSV content
+                        let csvContent = "Customer,Island,Date,Amount,Status,Payment Method\n";
+                        
+                        filteredOrders.forEach(order => {
+                            const customer = customers.find(c => c.id == order.customerId);
+                            const orderDate = new Date(order.date).toLocaleDateString();
+                            
+                            csvContent += `"${customer ? customer.name : 'Unknown'}","${customer ? customer.island : 'Unknown'}","${orderDate}","RF ${order.totalAmount}","${order.paymentStatus.toUpperCase()}","${order.paymentMethod}"\n`;
+                        });
+                        
+                        // Create download link
+                        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+                        const link = document.createElement("a");
+                        link.setAttribute("href", encodedUri);
+                        
+                        const dateStr = new Date().toISOString().slice(0, 10);
+                        link.setAttribute("download", `Payment_Report_${dateStr}.csv`);
+                        document.body.appendChild(link);
+                        
+                        link.click();
+                        document.body.removeChild(link);
                     });
                 });
             }
